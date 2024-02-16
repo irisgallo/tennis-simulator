@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>hi, i think i'm getting the hang of this again :)</string>
+     <string>why hello there</string>
     </property>
    </widget>
    <widget class="MyGL" name="openGLWidget">

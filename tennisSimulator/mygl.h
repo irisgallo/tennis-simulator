@@ -10,6 +10,10 @@ class MyGL : public QOpenGLWidget
 public:
     explicit MyGL(QWidget *parent = 0);
     ~MyGL();
+
+    void initializeGL();
+    void resizeGL(int w, int h);
+    void paintGL();
 };
 
 #endif // MYGL_H
