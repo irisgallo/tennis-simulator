@@ -1,4 +1,4 @@
-QT       += core gui
+QT += core widgets opengl openglwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,13 +10,18 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    mygl.cpp \
+    physicscontrols.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    mygl.h \
+    physicscontrols.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    physicscontrols.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
