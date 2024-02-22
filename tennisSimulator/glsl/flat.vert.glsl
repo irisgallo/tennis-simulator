@@ -13,7 +13,7 @@ void main()
 {
     fs_Col = vs_Col;
 
-    //built-in things to pass down the pipeline
+    // //built-in things to pass down the pipeline
     vec3 finalPos = u_View * u_Model * vs_Pos;
     gl_Position = vec4(finalPos.xy, finalPos.z - 0.001, 1);
 

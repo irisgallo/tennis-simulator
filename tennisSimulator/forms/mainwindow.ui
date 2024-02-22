@@ -6,34 +6,24 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>942</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Tennis Simulator</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>20</y>
-      <width>291</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>why hello there</string>
-    </property>
-   </widget>
    <widget class="MyGL" name="openGLWidget">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>50</y>
-      <width>731</width>
-      <height>501</height>
+      <x>20</x>
+      <y>10</y>
+      <width>900</width>
+      <height>600</height>
      </rect>
     </property>
    </widget>
@@ -43,7 +33,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>942</width>
      <height>24</height>
     </rect>
    </property>
