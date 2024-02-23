@@ -1,6 +1,6 @@
 ## CIS 4970 Final Project: Interactive Tennis Simulator
 Iris Gallo, Spring 2024 </br>
-Using Qt framework and OpenGL.
+Using Qt framework and OpenGL to create an interactive tennis simulator.
 
 ### Completed Items
 * Environment Setup
