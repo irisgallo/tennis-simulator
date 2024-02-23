@@ -1,3 +1,10 @@
-# CIS 4970 Final Project: Interactive Tennis Simulator
+## CIS 4970 Final Project: Interactive Tennis Simulator
+Iris Gallo, Spring 2024 </br>
+Using Qt framework and OpenGL.
 
-Step 1: Setup Environment on QT Creator
+### Completed Items
+* Environment Setup
+  * rendered a circle from scratch
+  * created tick() function
+  * created basic Ball class to track position and geometry
+  * successfully animated a Basic ball motion 
