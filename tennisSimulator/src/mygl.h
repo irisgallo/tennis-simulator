@@ -2,6 +2,7 @@
 #define MYGL_H
 
 #include "openglcontext.h"
+#include "scene/ball.h"
 #include <shaderprogram.h>
 #include <scene/polygon.h>
 
@@ -16,6 +17,7 @@ private:
     ShaderProgram prog_flat;// A shader program that uses "flat" reflection (no shadowing at all)
 
     Polygon2D m_geomCircle;
+    Ball m_ball;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 

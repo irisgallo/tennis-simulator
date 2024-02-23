@@ -11,6 +11,7 @@ MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
       m_geomCircle(this, 20),
+      m_ball(glm::vec3(-5, 0, 0), glm::vec3(0.84f, 1.0f, 0.15f)),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -72,15 +73,17 @@ void MyGL::resizeGL(int w, int h)
 void MyGL::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearColor(0, 0, 1, 1);
+
+    // background color
+    glClearColor(0.23f, 0.44f, 0.62f, 1);
 
     glm::vec3 c0 = {1, 0, 0};
     glm::vec3 c1 = {0, 1, 0};
-    glm::vec3 c2 = {5, 5, 1};
-    glm::mat3 m = glm::mat3(c0, c1, c2);
+    glm::vec3 c2 = m_ball.getPosition();
+    glm::mat3 mat = glm::mat3(c0, c1, c2);
 
-    prog_flat.setModelMatrix(m);
-    m_geomCircle.setColor(glm::vec3(0,1,0));
+    m_geomCircle.setColor(m_ball.getColor());
+    prog_flat.setModelMatrix(mat);
     prog_flat.draw(*this, m_geomCircle);
 }
 
@@ -95,6 +98,5 @@ void MyGL::tick() {
     qint64 dT = currMSecs - prevMSecs;
     prevMSecs = currMSecs;
 
-    // update the coordinates of the ball here
-    //m_player.tick(dT, m_inputs);
+    m_ball.tick(dT);
 }

@@ -2,26 +2,27 @@
 #define BALL_H
 
 #include "glm_includes.h"
-#include "polygon.h"
 
 class Ball
 {
 protected:
     glm::vec3 m_pos;
-    Polygon2D* m_geometry;
+    glm::vec3 m_color;
 
 public:
     Ball();
-    Ball(glm::vec3 pos, Polygon2D* p);
-    Ball(const Ball &b);
+    Ball(glm::vec3 pos, glm::vec3 color);
+    Ball(const Ball &ball);
     virtual ~Ball();
+
+    glm::vec3 getPosition();
+    void setPosition(glm::vec3 pos);
+    glm::vec3 getColor();
+    void setColor(glm::vec3 color);
 
     // To be called by MyGL::tick()
     void tick(float dT);
-
-    void moveRightLocal(float amount);
-    void moveRightGlobal(float amount);
-
+    void moveRight(float amount);
 };
 
 #endif // BALL_H
