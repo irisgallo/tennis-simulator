@@ -1,14 +1,21 @@
 #include "ball.h"
+#include <iostream>
 
-Ball::Ball() : Ball(glm::vec3(), glm::vec3(0, 1, 0))
+#ifndef GRAVITY
+#define GRAVITY 9.8f
+#endif
+
+Ball::Ball() : Ball(glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0))
 {}
 
-Ball::Ball(glm::vec3 pos, glm::vec3 color)
-    : m_pos(pos), m_color(color)
+Ball::Ball(glm::vec3 pos, glm::vec3 vel0, glm::vec3 color)
+    : m_pos(pos), m_vel(vel0), m_mass(1.0f),
+      m_color(color), m_gravity(glm::vec3(0.0, -GRAVITY, 0.0))
 {}
 
 Ball::Ball(const Ball &ball)
-    : m_pos(ball.m_pos), m_color(ball.m_color)
+    : m_pos(ball.m_pos), m_vel(ball.m_vel), m_mass(ball.m_mass),
+      m_color(ball.m_color), m_gravity(ball.m_gravity)
 {}
 
 Ball::~Ball()
@@ -16,7 +23,10 @@ Ball::~Ball()
 
 glm::vec3 Ball::getPosition()
 {
-    return m_pos;
+    glm::vec3 screenPos = glm::vec3(0.1 * m_pos[0],
+                                    0.1 * m_pos[1],
+                                    0.1 * m_pos[2]);
+    return screenPos;
 }
 
 void Ball::setPosition(glm::vec3 pos)
@@ -43,10 +53,33 @@ void Ball::tick(float dT)
         return;
     }
 
-    moveRight(0.1);
+    float scaledTime = 0.003 * dT;
+
+    m_pos += scaledTime * m_vel;
+    m_vel += scaledTime * m_gravity;
 }
 
 void Ball::moveRight(float amount)
 {
     m_pos += glm::vec3(amount, 0, 0);
 }
+
+void Ball::moveDown(float amount)
+{
+    m_pos += glm::vec3(0, amount, 0);
+}
+
+// void Ball::addForce(glm::vec3 force)
+// {
+//     m_forces = force;
+// }
+
+// void Ball::computeForces()
+// {
+//     // zero out forces
+//     m_forces = glm::vec3();
+
+//     // default is gravity force
+//     addForce(m_mass * m_gravity);
+// }
+

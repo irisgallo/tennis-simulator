@@ -11,7 +11,6 @@ MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
       m_geomCircle(this, 20),
-      m_ball(glm::vec3(-5, 0, 0), glm::vec3(0.84f, 1.0f, 0.15f)),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -59,6 +58,10 @@ void MyGL::initializeGL()
     // We have to have a VAO bound in OpenGL 3.2 Core. But if we're not
     // using multiple VAOs, we can just bind one once.
     glBindVertexArray(vao);
+
+    // initalize our tennis ball
+    m_ball = Ball(glm::vec3(-40, 0, 0), glm::vec3(15, 30, 0),
+                  glm::vec3(0.84f, 1.0f, 0.15f));
 
 }
 void MyGL::resizeGL(int w, int h)
