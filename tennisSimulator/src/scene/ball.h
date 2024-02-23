@@ -26,7 +26,6 @@ public:
 
     glm::vec3 getPosition();
     void setPosition(glm::vec3 pos);
-    void setVelocity(glm::vec3 vel);
     glm::vec3 getColor();
     void setColor(glm::vec3 color);
 
@@ -37,6 +36,11 @@ public:
 
     void reset();
     void pressedStartStop();
+
+    glm::vec3 getInitialPosition();
+    void setInitialPosition(glm::vec3 pos0);
+    glm::vec3 getInitialVelocity();
+    void setInitialVelocity(glm::vec3 vel0);
 };
 
 #endif // BALL_H

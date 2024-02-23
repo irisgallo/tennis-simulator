@@ -108,3 +108,36 @@ void MyGL::slot_setStartStop()
 {
     m_ball.pressedStartStop();
 }
+
+void MyGL::slot_reset()
+{
+    m_ball.reset();
+}
+
+void MyGL::slot_setPX(double px)
+{
+    glm::vec3 pos0 = m_ball.getInitialPosition();
+    pos0[0] = px;
+    m_ball.setInitialPosition(pos0);
+}
+
+void MyGL::slot_setPY(double py)
+{
+    glm::vec3 pos0 = m_ball.getInitialPosition();
+    pos0[1] = py;
+    m_ball.setInitialPosition(pos0);
+}
+
+void MyGL::slot_setVX(double vx)
+{
+    glm::vec3 vel0 = m_ball.getInitialVelocity();
+    vel0[0] = vx;
+    m_ball.setInitialVelocity(vel0);
+}
+
+void MyGL::slot_setVY(double vy)
+{
+    glm::vec3 vel0 = m_ball.getInitialVelocity();
+    vel0[1] = vy;
+    m_ball.setInitialVelocity(vel0);
+}

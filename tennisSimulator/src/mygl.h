@@ -37,6 +37,11 @@ private slots:
 
 public slots:
     void slot_setStartStop();
+    void slot_reset();
+    void slot_setPX(double px);
+    void slot_setPY(double py);
+    void slot_setVX(double vx);
+    void slot_setVY(double vy);
 };
 
 #endif // MYGL_H

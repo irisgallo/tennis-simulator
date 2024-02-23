@@ -36,12 +36,6 @@ void Ball::setPosition(glm::vec3 pos)
     m_pos = pos;
 }
 
-void Ball::setVelocity(glm::vec3 vel)
-{
-    m_vel0 = vel;
-    reset();
-}
-
 glm::vec3 Ball::getColor()
 {
     return m_color;
@@ -82,6 +76,28 @@ void Ball::reset()
 void Ball::pressedStartStop()
 {
     isStopped = !isStopped;
+}
+
+glm::vec3 Ball::getInitialPosition()
+{
+    return m_pos0;
+}
+
+void Ball::setInitialPosition(glm::vec3 pos0)
+{
+    m_pos0 = pos0;
+    reset();
+}
+
+glm::vec3 Ball::getInitialVelocity()
+{
+    return m_vel0;
+}
+
+void Ball::setInitialVelocity(glm::vec3 vel0)
+{
+    m_vel0 = vel0;
+    reset();
 }
 
 // void Ball::addForce(glm::vec3 force)
