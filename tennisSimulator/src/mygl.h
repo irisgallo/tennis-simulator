@@ -19,6 +19,9 @@ private:
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 
+    QTimer m_timer; // Timer linked to tick(). Fires approximately 60 times per second.
+    qint64 prevMSecs;
+
 public:
     explicit MyGL(QWidget *parent = 0);
     ~MyGL();
@@ -26,6 +29,9 @@ public:
     void initializeGL();
     void resizeGL(int w, int h);
     void paintGL();
+
+private slots:
+    void tick(); // Slot that gets called ~60 times per second by m_timer firing.
 };
 
 #endif // MYGL_H

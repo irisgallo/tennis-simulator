@@ -4,11 +4,19 @@
 #include <iostream>
 #include <QApplication>
 #include <QKeyEvent>
+#include <QDateTime>
 
 
 MyGL::MyGL(QWidget *parent)
-    : OpenGLContext(parent), prog_flat(this), m_geomCircle(this, 20)
+    : OpenGLContext(parent),
+      prog_flat(this),
+      m_geomCircle(this, 20),
+      prevMSecs(0)
 {
+    // Connect the timer to a function so that when the timer ticks the function is executed
+    connect(&m_timer, SIGNAL(timeout()), this, SLOT(tick()));
+    // Tell the timer to redraw 60 times per second
+    m_timer.start(16);
     setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -66,7 +74,27 @@ void MyGL::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearColor(0, 0, 1, 1);
 
-    prog_flat.setModelMatrix(glm::mat3());
+    glm::vec3 c0 = {1, 0, 0};
+    glm::vec3 c1 = {0, 1, 0};
+    glm::vec3 c2 = {5, 5, 1};
+    glm::mat3 m = glm::mat3(c0, c1, c2);
+
+    prog_flat.setModelMatrix(m);
     m_geomCircle.setColor(glm::vec3(0,1,0));
     prog_flat.draw(*this, m_geomCircle);
+}
+
+// MyGL's constructor links tick() to a timer that fires 60 times per second.
+// We're treating MyGL as our game engine class, so we're going to perform
+// all per-frame actions here, such as performing physics updates on all
+// entities in the scene.
+void MyGL::tick() {
+    update(); // Calls paintGL() as part of a larger QOpenGLWidget pipeline
+
+    qint64 currMSecs = QDateTime::currentMSecsSinceEpoch();
+    qint64 dT = currMSecs - prevMSecs;
+    prevMSecs = currMSecs;
+
+    // update the coordinates of the ball here
+    //m_player.tick(dT, m_inputs);
 }

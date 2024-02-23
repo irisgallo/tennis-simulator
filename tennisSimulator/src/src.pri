@@ -8,6 +8,7 @@ SOURCES += \
     $$PWD/mygl.cpp \
     $$PWD/openglcontext.cpp \
     $$PWD/physicscontrols.cpp \
+    $$PWD/scene/ball.cpp \
     $$PWD/scene/polygon.cpp \
     $$PWD/shaderprogram.cpp
 
@@ -19,5 +20,6 @@ HEADERS += \
     $$PWD/mygl.h \
     $$PWD/openglcontext.h \
     $$PWD/physicscontrols.h \
+    $$PWD/scene/ball.h \
     $$PWD/scene/polygon.h \
     $$PWD/shaderprogram.h
