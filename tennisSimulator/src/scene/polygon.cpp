@@ -9,7 +9,7 @@ Polygon2D::Polygon2D(OpenGLContext* context, int numSides)
     : Drawable(context), m_vertPos(), m_vertIdx(), m_numVertices(numSides)
 {
     // Vertex positions
-    glm::vec3 p(0.5f, 0.f, 1.f);
+    glm::vec3 p(0.25f, 0.f, 0.5f);
     float deg = glm::radians(360.f / numSides);
     for (int i = 0; i < numSides; i++)
     {
