@@ -103,3 +103,8 @@ void MyGL::tick() {
 
     m_ball.tick(dT);
 }
+
+void MyGL::slot_setStartStop()
+{
+    m_ball.pressedStartStop();
+}

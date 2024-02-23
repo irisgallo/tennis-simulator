@@ -16,6 +16,12 @@ public:
     ~PhysicsControls();
 
     Ui::PhysicsControls *ui;
+
+public slots:
+    void slot_setStartStop();
+
+signals:
+    void sig_setStartStop();
 };
 
 #endif // PHYSICSCONTROLS_H

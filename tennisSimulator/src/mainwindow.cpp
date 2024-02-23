@@ -12,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     physicsControls->show();
     physicsControls->move(QGuiApplication::primaryScreen()->availableGeometry().center() - this->rect().center() + QPoint(this->width(), 0));
+
+    connect(physicsControls, SIGNAL(sig_setStartStop()),
+            ui->mygl, SLOT(slot_setStartStop()));
 }
 
 MainWindow::~MainWindow()

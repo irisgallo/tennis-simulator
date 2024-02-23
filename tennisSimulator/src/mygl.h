@@ -34,6 +34,9 @@ public:
 
 private slots:
     void tick(); // Slot that gets called ~60 times per second by m_timer firing.
+
+public slots:
+    void slot_setStartStop();
 };
 
 #endif // MYGL_H

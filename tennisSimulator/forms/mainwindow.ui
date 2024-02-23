@@ -14,7 +14,7 @@
    <string>Tennis Simulator</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="MyGL" name="openGLWidget">
+   <widget class="MyGL" name="mygl">
     <property name="enabled">
      <bool>true</bool>
     </property>
