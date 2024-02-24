@@ -60,8 +60,9 @@ void MyGL::initializeGL()
     glBindVertexArray(vao);
 
     // initalize our tennis ball
-    m_ball = Ball(glm::vec3(-40, 0, 0), glm::vec3(15, 30, 0),
+    m_ball = Ball(glm::vec3(-120.f, 0.f, 0.f), glm::vec3(15.f, 30.f, 0.f),
                   glm::vec3(0.84f, 1.0f, 0.15f));
+    sendSignals(m_ball.getInitialPosition(), m_ball.getInitialVelocity());
 
 }
 void MyGL::resizeGL(int w, int h)
@@ -140,4 +141,10 @@ void MyGL::slot_setVY(double vy)
     glm::vec3 vel0 = m_ball.getInitialVelocity();
     vel0[1] = vy;
     m_ball.setInitialVelocity(vel0);
+}
+
+void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0)
+{
+    emit sig_sendPos(pos0[0], pos0[1]);
+    emit sig_sendVel(vel0[0], vel0[1]);
 }

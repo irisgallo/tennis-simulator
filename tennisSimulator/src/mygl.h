@@ -32,6 +32,8 @@ public:
     void resizeGL(int w, int h);
     void paintGL();
 
+    void sendSignals(glm::vec3 pos0, glm::vec3 vel0);
+
 private slots:
     void tick(); // Slot that gets called ~60 times per second by m_timer firing.
 
@@ -42,6 +44,10 @@ public slots:
     void slot_setPY(double py);
     void slot_setVX(double vx);
     void slot_setVY(double vy);
+
+signals:
+    void sig_sendPos(double, double);
+    void sig_sendVel(double, double);
 };
 
 #endif // MYGL_H

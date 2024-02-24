@@ -24,6 +24,8 @@ public slots:
     void slot_setPY(double py);
     void slot_setVX(double vx);
     void slot_setVY(double vy);
+    void slot_setPos(double px, double py);
+    void slot_setVel(double vx, double vy);
 
 
 signals:

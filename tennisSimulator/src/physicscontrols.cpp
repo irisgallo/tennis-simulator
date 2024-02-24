@@ -52,6 +52,18 @@ void PhysicsControls::slot_setVY(double vy)
     emit sig_setVY(vy);
 }
 
+void PhysicsControls::slot_setPos(double px, double py)
+{
+    ui->pxSpinBox->setValue(px);
+    ui->pySpinBox->setValue(py);
+}
+
+void PhysicsControls::slot_setVel(double vx, double vy)
+{
+    ui->vxSpinBox->setValue(vx);
+    ui->vySpinBox->setValue(vy);
+}
+
 PhysicsControls::~PhysicsControls()
 {
     delete ui;
