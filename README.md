@@ -7,4 +7,4 @@ Using Qt framework and OpenGL to create an interactive tennis simulator.
   * rendered a circle from scratch
   * created tick() function
   * created basic Ball class to track position and geometry
-  * successfully animated a Basic ball motion 
+  * successfully animated a basic ball motion 
