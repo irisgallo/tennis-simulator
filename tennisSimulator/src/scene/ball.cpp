@@ -5,7 +5,7 @@
 #define GRAVITY 9.8f
 #endif
 
-Ball::Ball() : Ball(glm::vec3(), glm::vec3(), glm::vec3(0, 1, 0))
+Ball::Ball() : Ball(glm::vec3(), glm::vec3(), glm::vec3(0))
 {}
 
 Ball::Ball(glm::vec3 pos0, glm::vec3 vel0, glm::vec3 color)
@@ -25,10 +25,7 @@ Ball::~Ball()
 
 glm::vec3 Ball::getPosition()
 {
-    glm::vec3 screenPos = glm::vec3(0.1 * m_pos[0],
-                                    0.1 * m_pos[1],
-                                    0.1 * m_pos[2]);
-    return screenPos;
+    return m_pos;
 }
 
 void Ball::setPosition(glm::vec3 pos)
@@ -55,8 +52,7 @@ void Ball::tick(float dT)
     // compute physics
     if (dT >= 1000.f)
     {
-        // If the window is minimized, we can end up with huge dT values between ticks,
-        // leading to massive acceleration. This should avoid that
+        // avoids huge dT values between ticks
         return;
     }
 
@@ -100,17 +96,12 @@ void Ball::setInitialVelocity(glm::vec3 vel0)
     reset();
 }
 
-// void Ball::addForce(glm::vec3 force)
-// {
-//     m_forces = force;
-// }
-
-// void Ball::computeForces()
-// {
-//     // zero out forces
-//     m_forces = glm::vec3();
-
-//     // default is gravity force
-//     addForce(m_mass * m_gravity);
-// }
+glm::mat3 Ball::getModelMatrix()
+{
+    glm::vec3 c0 = {1, 0, 0};
+    glm::vec3 c1 = {0, 1, 0};
+    glm::vec3 c2 = getPosition();
+    c2 *= 0.1;
+    return glm::mat3(c0, c1, c2);
+}
 

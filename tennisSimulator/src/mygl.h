@@ -3,6 +3,7 @@
 
 #include "openglcontext.h"
 #include "scene/ball.h"
+#include "scene/racquet.h"
 #include <shaderprogram.h>
 #include <scene/polygon.h>
 
@@ -17,7 +18,9 @@ private:
     ShaderProgram prog_flat;// A shader program that uses "flat" reflection (no shadowing at all)
 
     Polygon2D m_geomCircle;
+    Polygon2D m_geomSquare;
     Ball m_ball;
+    Racquet m_racquet;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 
@@ -33,6 +36,8 @@ public:
     void paintGL();
 
     void sendSignals(glm::vec3 pos0, glm::vec3 vel0);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 private slots:
     void tick(); // Slot that gets called ~60 times per second by m_timer firing.

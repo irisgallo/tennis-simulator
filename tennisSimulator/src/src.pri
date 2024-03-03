@@ -10,6 +10,7 @@ SOURCES += \
     $$PWD/physicscontrols.cpp \
     $$PWD/scene/ball.cpp \
     $$PWD/scene/polygon.cpp \
+    $$PWD/scene/racquet.cpp \
     $$PWD/shaderprogram.cpp
 
 HEADERS += \
@@ -22,4 +23,5 @@ HEADERS += \
     $$PWD/physicscontrols.h \
     $$PWD/scene/ball.h \
     $$PWD/scene/polygon.h \
+    $$PWD/scene/racquet.h \
     $$PWD/shaderprogram.h

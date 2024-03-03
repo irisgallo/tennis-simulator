@@ -8,7 +8,6 @@ class Ball
 protected:
     glm::vec3 m_pos;
     glm::vec3 m_vel;
-    //glm::vec3 m_forces;
 
     glm::vec3 m_pos0;
     glm::vec3 m_vel0;
@@ -31,8 +30,6 @@ public:
 
     // To be called by MyGL::tick()
     void tick(float dT);
-    // void addForce(glm::vec3 force);
-    // void computeForces();
 
     void reset();
     void pressedStartStop();
@@ -41,6 +38,7 @@ public:
     void setInitialPosition(glm::vec3 pos0);
     glm::vec3 getInitialVelocity();
     void setInitialVelocity(glm::vec3 vel0);
+    glm::mat3 getModelMatrix();
 };
 
 #endif // BALL_H

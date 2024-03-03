@@ -6,11 +6,13 @@
 #include <QKeyEvent>
 #include <QDateTime>
 
+bool clicked = false;
 
 MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
       m_geomCircle(this, 20),
+      m_geomSquare(this, 4),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -26,6 +28,7 @@ MyGL::~MyGL()
 
     glDeleteVertexArrays(1, &vao);
     m_geomCircle.destroy();
+    m_geomSquare.destroy();
 }
 
 void MyGL::initializeGL()
@@ -51,8 +54,8 @@ void MyGL::initializeGL()
     glGenVertexArrays(1, &vao);
 
     m_geomCircle.create();
+    m_geomSquare.create();
 
-    // Create and set up the flat lighting shader
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
     // We have to have a VAO bound in OpenGL 3.2 Core. But if we're not
@@ -60,11 +63,15 @@ void MyGL::initializeGL()
     glBindVertexArray(vao);
 
     // initalize our tennis ball
-    m_ball = Ball(glm::vec3(-120.f, 0.f, 0.f), glm::vec3(15.f, 30.f, 0.f),
+    m_ball = Ball(glm::vec3(-120.f, 0.f, 0.f),
+                  glm::vec3(15.f, 30.f, 0.f),
                   glm::vec3(0.84f, 1.0f, 0.15f));
-    sendSignals(m_ball.getInitialPosition(), m_ball.getInitialVelocity());
+    m_racquet = Racquet(glm::vec3(-130.f, 0.f, 0.f),
+                        glm::vec3(0.8, 0.8, 0.8));
 
+    sendSignals(m_ball.getInitialPosition(), m_ball.getInitialVelocity());
 }
+
 void MyGL::resizeGL(int w, int h)
 {
     glm::mat3 viewMat = glm::scale(glm::mat3(), glm::vec2(0.1, 0.15));
@@ -74,6 +81,7 @@ void MyGL::resizeGL(int w, int h)
 
     printGLErrorLog();
 }
+
 void MyGL::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -81,14 +89,22 @@ void MyGL::paintGL()
     // background color
     glClearColor(0.23f, 0.44f, 0.62f, 1);
 
-    glm::vec3 c0 = {1, 0, 0};
-    glm::vec3 c1 = {0, 1, 0};
-    glm::vec3 c2 = m_ball.getPosition();
-    glm::mat3 mat = glm::mat3(c0, c1, c2);
-
+    // circle
     m_geomCircle.setColor(m_ball.getColor());
-    prog_flat.setModelMatrix(mat);
+    prog_flat.setModelMatrix(m_ball.getModelMatrix());
     prog_flat.draw(*this, m_geomCircle);
+
+    // rectangle
+    //m_geomSquare.setColor(m_racquet.getColor());
+
+    if (clicked) {
+        m_geomSquare.setColor(glm::vec3(0.375, 0.344, 0.520));
+    } else {
+        m_geomSquare.setColor(glm::vec3(0.8, 0.8, 0.8));
+    }
+
+    prog_flat.setModelMatrix(m_racquet.getModelMatrix());
+    prog_flat.draw(*this, m_geomSquare);
 }
 
 // MyGL's constructor links tick() to a timer that fires 60 times per second.
@@ -147,4 +163,31 @@ void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0)
 {
     emit sig_sendPos(pos0[0], pos0[1]);
     emit sig_sendVel(vel0[0], vel0[1]);
+}
+
+// screen space is ([0:900], [0:600])
+// world space is ([-200:200], [-133:133])
+void MyGL::mousePressEvent(QMouseEvent *event)
+{
+    float xAtPress = (event->position().x() - 450.0) * (4.0 / 9.0);
+    float yAtPress = (event->position().y() - 300.0) * (-4.0 / 9.0);
+
+    std::cerr << "x: " << xAtPress << ", y: " << yAtPress << "\n";
+
+    if ((xAtPress < 3.55) && (xAtPress > -3.55) && (yAtPress < 14.2) && (yAtPress > -14.2))
+    {
+        clicked = !clicked;
+    }
+
+    event->accept();
+}
+
+void MyGL::mouseMoveEvent(QMouseEvent *event)
+{
+    float xAtMove = (event->position().x() - 450.0) * (4.0 / 9.0);
+    float yAtMove = (event->position().y() - 300.0) * (-4.0 / 9.0);
+
+    m_racquet.setPosition(glm::vec3(xAtMove, yAtMove, 0.f));
+
+    event->accept();
 }

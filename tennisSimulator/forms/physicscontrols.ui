@@ -49,10 +49,10 @@
     </rect>
    </property>
    <property name="minimum">
-    <double>-150.000000000000000</double>
+    <double>-300.000000000000000</double>
    </property>
    <property name="maximum">
-    <double>150.000000000000000</double>
+    <double>300.000000000000000</double>
    </property>
   </widget>
   <widget class="QDoubleSpinBox" name="pySpinBox">
@@ -65,10 +65,10 @@
     </rect>
    </property>
    <property name="minimum">
-    <double>-66.000000000000000</double>
+    <double>-300.000000000000000</double>
    </property>
    <property name="maximum">
-    <double>66.000000000000000</double>
+    <double>300.000000000000000</double>
    </property>
   </widget>
   <widget class="QLabel" name="posLabel">
@@ -133,7 +133,10 @@
     </rect>
    </property>
    <property name="minimum">
-    <double>-99.000000000000000</double>
+    <double>-300.000000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>300.000000000000000</double>
    </property>
   </widget>
   <widget class="QDoubleSpinBox" name="vySpinBox">
@@ -146,7 +149,10 @@
     </rect>
    </property>
    <property name="minimum">
-    <double>-99.000000000000000</double>
+    <double>-300.000000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>300.000000000000000</double>
    </property>
   </widget>
   <widget class="QLabel" name="velYLabel">
