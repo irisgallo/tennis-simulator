@@ -11,7 +11,7 @@ Ball::Ball() : Ball(glm::vec3(), glm::vec3(), glm::vec3(0))
 Ball::Ball(glm::vec3 pos0, glm::vec3 vel0, glm::vec3 color)
     : m_pos(pos0), m_vel(vel0), m_pos0(pos0), m_vel0(vel0),
       m_color(color), m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
-      isStopped(true)
+      m_radius(5.0), isStopped(true)
 {}
 
 Ball::Ball(const Ball &ball)
@@ -22,26 +22,6 @@ Ball::Ball(const Ball &ball)
 
 Ball::~Ball()
 {}
-
-glm::vec3 Ball::getPosition()
-{
-    return m_pos;
-}
-
-void Ball::setPosition(glm::vec3 pos)
-{
-    m_pos = pos;
-}
-
-glm::vec3 Ball::getColor()
-{
-    return m_color;
-}
-
-void Ball::setColor(glm::vec3 color)
-{
-    m_color = color;
-}
 
 void Ball::tick(float dT)
 {
@@ -72,6 +52,31 @@ void Ball::reset()
 void Ball::pressedStartStop()
 {
     isStopped = !isStopped;
+}
+
+glm::vec3 Ball::getPosition()
+{
+    return m_pos;
+}
+
+void Ball::setPosition(glm::vec3 pos)
+{
+    m_pos = pos;
+}
+
+glm::vec3 Ball::getColor()
+{
+    return m_color;
+}
+
+void Ball::setColor(glm::vec3 color)
+{
+    m_color = color;
+}
+
+float Ball::getRadius()
+{
+    return m_radius;
 }
 
 glm::vec3 Ball::getInitialPosition()

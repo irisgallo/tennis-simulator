@@ -19,6 +19,11 @@ private:
 
     Polygon2D m_geomCircle;
     Polygon2D m_geomSquare;
+
+    // // debugging purposes
+    Polygon2D m_displayPoint;
+    glm::vec3 point;
+
     Ball m_ball;
     Racquet m_racquet;
 
@@ -38,6 +43,8 @@ public:
     void sendSignals(glm::vec3 pos0, glm::vec3 vel0);
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+
+    bool detectCollision();
 
 private slots:
     void tick(); // Slot that gets called ~60 times per second by m_timer firing.

@@ -4,11 +4,14 @@ Racquet::Racquet() : Racquet(glm::vec3(), glm::vec3())
 {}
 
 Racquet::Racquet(glm::vec3 pos0, glm::vec3 color)
-    : m_pos(pos0), m_color(color)
+    : m_pos(pos0), m_color(color), m_width(7.1),
+      m_height(28.4), m_deg(0.0)
 {}
 
 Racquet::Racquet(const Racquet &racquet)
-    : m_pos(racquet.m_pos), m_color(racquet.m_color)
+    : m_pos(racquet.m_pos), m_color(racquet.m_color),
+      m_width(racquet.m_width), m_height(racquet.m_height),
+      m_deg(racquet.m_deg)
 {}
 
 Racquet::~Racquet()
@@ -32,6 +35,26 @@ glm::vec3 Racquet::getColor()
 void Racquet::setColor(glm::vec3 color)
 {
     m_color = color;
+}
+
+float Racquet::getWidth()
+{
+    return m_width;
+}
+
+float Racquet::getHeight()
+{
+    return m_height;
+}
+
+float Racquet::getAngle()
+{
+    return m_deg;
+}
+
+void Racquet::setAngle(float deg)
+{
+    m_deg = deg;
 }
 
 glm::mat3 Racquet::getModelMatrix()
