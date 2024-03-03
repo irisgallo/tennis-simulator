@@ -9,8 +9,10 @@
 MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
-      m_geomCircle(this, 20),
-      m_geomSquare(this, 4),
+      m_geomBall(this, 20),
+      m_geomRacquet(this, 4),
+      m_geomCourt(this, 4),
+      m_geomNet(this, 4),
       m_displayPoint(this, 10),
       prevMSecs(0)
 {
@@ -26,8 +28,10 @@ MyGL::~MyGL()
     makeCurrent();
 
     glDeleteVertexArrays(1, &vao);
-    m_geomCircle.destroy();
-    m_geomSquare.destroy();
+    m_geomBall.destroy();
+    m_geomRacquet.destroy();
+    m_geomCourt.destroy();
+    m_geomNet.destroy();
     m_displayPoint.destroy();
 }
 
@@ -53,8 +57,10 @@ void MyGL::initializeGL()
     // Create a Vertex Attribute Object
     glGenVertexArrays(1, &vao);
 
-    m_geomCircle.create();
-    m_geomSquare.create();
+    m_geomBall.create();
+    m_geomRacquet.create();
+    m_geomCourt.create();
+    m_geomNet.create();
     m_displayPoint.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
@@ -64,11 +70,11 @@ void MyGL::initializeGL()
     glBindVertexArray(vao);
 
     // initalize our tennis ball and racquet
-    m_ball = Ball(glm::vec3(-120.f, 0.f, 0.f),
-                  glm::vec3(15.f, 30.f, 0.f),
+    m_ball = Ball(glm::vec3(-150.f, -20.f, 0.f),
+                  glm::vec3(35.f, 25.f, 0.f),
                   glm::vec3(0.84f, 1.0f, 0.15f));
-    m_racquet = Racquet(glm::vec3(-130.f, 0.f, 0.f),
-                        glm::vec3(0.8, 0.8, 0.8));
+    m_racquet = Racquet(glm::vec3(-160.f, -20.f, 0.f),
+                        glm::vec3(0.898f, 0.840, 1.f));
     point = m_ball.getPosition();
 
     sendSignals(m_ball.getInitialPosition(), m_ball.getInitialVelocity());
@@ -94,23 +100,24 @@ void MyGL::paintGL()
     bool isColliding = detectCollision();
     if (isColliding)
     {
-        m_geomCircle.setColor(glm::vec3(0.969, 0.512, 0.473));
+        m_geomBall.setColor(glm::vec3(0.969, 0.512, 0.473));
     }
     else
     {
-        m_geomCircle.setColor(m_ball.getColor());
+        m_geomBall.setColor(m_ball.getColor());
     }
 
-    // circle
+    // ball
     //m_geomCircle.setColor(m_ball.getColor());
     prog_flat.setModelMatrix(m_ball.getModelMatrix());
-    prog_flat.draw(*this, m_geomCircle);
+    prog_flat.draw(*this, m_geomBall);
 
-    // rectangle
-    m_geomSquare.setColor(m_racquet.getColor());
+    // racquet
+    m_geomRacquet.setColor(m_racquet.getColor());
     prog_flat.setModelMatrix(m_racquet.getModelMatrix());
-    prog_flat.draw(*this, m_geomSquare);
+    prog_flat.draw(*this, m_geomRacquet);
 
+    // debugging point visual
     m_displayPoint.setColor(glm::vec3(1, 0, 0));
 
     glm::mat3 mat = glm::mat3({{0.2, 0, 0},
@@ -118,6 +125,16 @@ void MyGL::paintGL()
                                {0.1 * point.x, 0.1 * point.y, 1}});
     prog_flat.setModelMatrix(mat);
     prog_flat.draw(*this, m_displayPoint);
+
+    // tennis court
+    m_geomCourt.setColor(glm::vec3(0.8, 0.8, 0.8));
+    prog_flat.setModelMatrix(getCourtModelMatrix());
+    prog_flat.draw(*this, m_geomCourt);
+
+    // tennis net
+    m_geomNet.setColor(glm::vec3(0.8, 0.8, 0.8));
+    prog_flat.setModelMatrix(getNetModelMatrix());
+    prog_flat.draw(*this, m_geomNet);
 }
 
 // MyGL's constructor links tick() to a timer that fires 60 times per second.
@@ -265,3 +282,49 @@ bool MyGL::detectCollision()
 
     return false;
 }
+
+glm::mat3 MyGL::getCourtModelMatrix()
+{
+    // translate
+    glm::vec3 pos = glm::vec3(0.f, -110.f, 0.f);
+    pos *= 0.1;
+    glm::mat3 translate = glm::mat3({1, 0, 0}, {0, 1, 0}, pos);
+
+    // scale
+    glm::mat3 scale = glm::mat3({57.0, 0, 0}, {0, 8.0, 0}, {0, 0, 1});
+
+    // rotate
+    float rad = glm::radians(45.0);
+    float cos = glm::cos(rad);
+    float sin = glm::sin(rad);
+    glm::vec3 c0 = {cos, sin, 0};
+    glm::vec3 c1 = {-sin, cos, 0};
+    glm::vec3 c2 = {0, 0, 1};
+    glm::mat3 rotate = glm::mat3(c0, c1, c2);
+
+    return translate * scale * rotate;
+}
+
+glm::mat3 MyGL::getNetModelMatrix()
+{
+    // translate
+    glm::vec3 pos = glm::vec3(0.f, -68.f, 0.f);
+    pos *= 0.1;
+    glm::mat3 translate = glm::mat3({1, 0, 0}, {0, 1, 0}, pos);
+
+    // scale
+    glm::mat3 scale = glm::mat3({1.0, 0, 0}, {0, 4.0, 0}, {0, 0, 1});
+
+    // rotate
+    float rad = glm::radians(45.0);
+    float cos = glm::cos(rad);
+    float sin = glm::sin(rad);
+    glm::vec3 c0 = {cos, sin, 0};
+    glm::vec3 c1 = {-sin, cos, 0};
+    glm::vec3 c2 = {0, 0, 1};
+    glm::mat3 rotate = glm::mat3(c0, c1, c2);
+
+    return translate * scale * rotate;
+}
+
+

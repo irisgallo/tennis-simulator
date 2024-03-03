@@ -17,10 +17,13 @@ class MyGL : public OpenGLContext
 private:
     ShaderProgram prog_flat;// A shader program that uses "flat" reflection (no shadowing at all)
 
-    Polygon2D m_geomCircle;
-    Polygon2D m_geomSquare;
+    // geometry
+    Polygon2D m_geomBall;
+    Polygon2D m_geomRacquet;
+    Polygon2D m_geomCourt;
+    Polygon2D m_geomNet;
 
-    // // debugging purposes
+    // for debugging purposes
     Polygon2D m_displayPoint;
     glm::vec3 point;
 
@@ -31,6 +34,9 @@ private:
 
     QTimer m_timer; // Timer linked to tick(). Fires approximately 60 times per second.
     qint64 prevMSecs;
+
+    glm::mat3 getCourtModelMatrix();
+    glm::mat3 getNetModelMatrix();
 
 public:
     explicit MyGL(QWidget *parent = 0);
