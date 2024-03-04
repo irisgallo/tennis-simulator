@@ -35,13 +35,23 @@ void Ball::tick(float dT)
         // avoids huge dT values between ticks
         return;
     }
-    // compute intersection with tennis court (which lies at y = -82.67)
-    if (m_pos.y - m_radius <= -81.1)
-    {
-        return;
-    }
 
     float scaledTime = 0.003 * dT;
+
+    // compute intersection with tennis court (which lies at y = -81.1)
+    // these are placeholders for bounce and and a right boundary for now
+    if (m_pos.y - m_radius <= -81.1)
+    {
+        m_vel.y *= -0.5;
+        m_pos += scaledTime * m_vel;
+        return;
+    }
+    if (m_pos.x + m_radius >= 199.0)
+    {
+        m_vel.x *= -0.5;
+        m_pos += scaledTime * m_vel;
+        return;
+    }
 
     m_pos += scaledTime * m_vel;
     m_vel += scaledTime * m_gravity;

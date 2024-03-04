@@ -97,7 +97,7 @@ void MyGL::paintGL()
     // background color
     glClearColor(0.23f, 0.44f, 0.62f, 1);
 
-    bool isColliding = detectCollision();
+    bool isColliding = detectRacquetCollision();
     if (isColliding)
     {
         m_geomBall.setColor(glm::vec3(0.969, 0.512, 0.473));
@@ -217,7 +217,7 @@ void MyGL::mouseMoveEvent(QMouseEvent *event)
     event->accept();
 }
 
-bool MyGL::detectCollision()
+bool MyGL::detectRacquetCollision()
 {
     // If the racquet is rotated, we need to rotate the position of
     // the ball with the opposite, but equal, angle amount w.r.t the
@@ -280,6 +280,12 @@ bool MyGL::detectCollision()
         return true;
     }
 
+    return false;
+}
+
+bool MyGL::detectNetCollision()
+{
+    // TODO
     return false;
 }
 

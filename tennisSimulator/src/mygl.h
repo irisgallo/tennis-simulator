@@ -50,7 +50,8 @@ public:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
-    bool detectCollision();
+    bool detectRacquetCollision();
+    bool detectNetCollision();
 
 private slots:
     void tick(); // Slot that gets called ~60 times per second by m_timer firing.
