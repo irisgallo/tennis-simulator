@@ -25,7 +25,9 @@ private:
 
     // for debugging purposes
     Polygon2D m_displayPoint;
+    Polygon2D m_displayNetPoint;
     glm::vec3 point;
+    glm::vec3 netPoint;
 
     Ball m_ball;
     Racquet m_racquet;
@@ -51,7 +53,6 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
 
     bool detectRacquetCollision();
-    bool detectNetCollision();
 
 private slots:
     void tick(); // Slot that gets called ~60 times per second by m_timer firing.

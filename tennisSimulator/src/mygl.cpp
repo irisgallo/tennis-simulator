@@ -14,6 +14,7 @@ MyGL::MyGL(QWidget *parent)
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
       m_displayPoint(this, 10),
+      m_displayNetPoint(this, 10),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -33,6 +34,7 @@ MyGL::~MyGL()
     m_geomCourt.destroy();
     m_geomNet.destroy();
     m_displayPoint.destroy();
+    m_displayNetPoint.destroy();
 }
 
 void MyGL::initializeGL()
@@ -62,6 +64,7 @@ void MyGL::initializeGL()
     m_geomCourt.create();
     m_geomNet.create();
     m_displayPoint.create();
+    m_displayNetPoint.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -76,6 +79,7 @@ void MyGL::initializeGL()
     m_racquet = Racquet(glm::vec3(-160.f, -20.f, 0.f),
                         glm::vec3(0.898f, 0.840, 1.f));
     point = m_ball.getPosition();
+    netPoint = m_ball.getNetPoint();
 
     sendSignals(m_ball.getInitialPosition(), m_ball.getInitialVelocity());
 }
@@ -97,10 +101,11 @@ void MyGL::paintGL()
     // background color
     glClearColor(0.23f, 0.44f, 0.62f, 1);
 
-    bool isColliding = detectRacquetCollision();
-    if (isColliding)
+    if (detectRacquetCollision())
     {
         m_geomBall.setColor(glm::vec3(0.969, 0.512, 0.473));
+        m_ball.setInitialVelocity(glm::vec3(25.0, 0, 0));
+        m_ball.pressedStartStop();
     }
     else
     {
@@ -125,6 +130,14 @@ void MyGL::paintGL()
                                {0.1 * point.x, 0.1 * point.y, 1}});
     prog_flat.setModelMatrix(mat);
     prog_flat.draw(*this, m_displayPoint);
+
+    netPoint = m_ball.getNetPoint();
+    m_displayNetPoint.setColor(glm::vec3(0, 1, 0));
+    mat = glm::mat3({{0.2, 0, 0},
+                     {0, 0.2, 0},
+                     {0.1 * netPoint.x, 0.1 * netPoint.y, 1}});
+    prog_flat.setModelMatrix(mat);
+    prog_flat.draw(*this, m_displayNetPoint);
 
     // tennis court
     m_geomCourt.setColor(glm::vec3(0.8, 0.8, 0.8));
@@ -280,12 +293,6 @@ bool MyGL::detectRacquetCollision()
         return true;
     }
 
-    return false;
-}
-
-bool MyGL::detectNetCollision()
-{
-    // TODO
     return false;
 }
 

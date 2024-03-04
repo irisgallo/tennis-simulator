@@ -19,6 +19,10 @@ protected:
 
     bool isStopped;
 
+    bool detectNetCollision();
+    // for debugging
+    glm::vec3 netPoint;
+
 public:
     Ball();
     Ball(glm::vec3 pos0, glm::vec3 vel0, glm::vec3 color);
@@ -42,6 +46,9 @@ public:
     glm::vec3 getInitialVelocity();
     void setInitialVelocity(glm::vec3 vel0);
     glm::mat3 getModelMatrix();
+
+    // for debugging purposes
+    glm::vec3 getNetPoint();
 };
 
 #endif // BALL_H

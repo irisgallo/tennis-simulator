@@ -11,13 +11,14 @@ Ball::Ball() : Ball(glm::vec3(), glm::vec3(), glm::vec3(0))
 Ball::Ball(glm::vec3 pos0, glm::vec3 vel0, glm::vec3 color)
     : m_pos(pos0), m_vel(vel0), m_pos0(pos0), m_vel0(vel0),
       m_color(color), m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
-      m_radius(3.5), isStopped(true)
+      m_radius(3.5), isStopped(true), netPoint(glm::vec3())
 {}
 
 Ball::Ball(const Ball &ball)
     : m_pos(ball.m_pos), m_vel(ball.m_vel), m_pos0(ball.m_pos0),
       m_vel0(ball.m_vel0), m_color(ball.m_color),
-      m_gravity(ball.m_gravity), isStopped(ball.isStopped)
+      m_gravity(ball.m_gravity), m_radius(ball.m_radius),
+      isStopped(ball.isStopped), netPoint(ball.netPoint)
 {}
 
 Ball::~Ball()
@@ -42,19 +43,79 @@ void Ball::tick(float dT)
     // these are placeholders for bounce and and a right boundary for now
     if (m_pos.y - m_radius <= -81.1)
     {
-        m_vel.y *= -0.5;
+        m_vel.y *= -1;
         m_pos += scaledTime * m_vel;
         return;
     }
     if (m_pos.x + m_radius >= 199.0)
     {
-        m_vel.x *= -0.5;
+        m_vel.x *= -1;
+        m_pos += scaledTime * m_vel;
+        return;
+    }
+    // detect net collision
+    if (detectNetCollision())
+    {
+        m_color = glm::vec3(0, 1, 0);
+        m_vel.x *= -1;
         m_pos += scaledTime * m_vel;
         return;
     }
 
+    m_color = glm::vec3(0.84f, 1.0f, 0.15f);
     m_pos += scaledTime * m_vel;
     m_vel += scaledTime * m_gravity;
+}
+
+bool Ball::detectNetCollision()
+{
+    // find the closest point on the racquet to the ball
+
+    float width = 7.1;
+    float height = 28.4;
+    glm::vec3 netPos = glm::vec3(0.f, -68.0, 0.f);
+    glm::vec3 closestPoint = glm::vec3();
+
+    if (m_pos.x < netPos.x - (width / 2.0))
+    {
+        closestPoint.x = netPos.x - (width / 2.0);
+    }
+    else if (m_pos.x > netPos.x + (width / 2.0))
+    {
+        closestPoint.x = netPos.x + (width / 2.0);
+    }
+    else
+    {
+        closestPoint.x = m_pos.x;
+    }
+
+    if (m_pos.y < netPos.y - (height / 2.0))
+    {
+        closestPoint.y = netPos.y - (height / 2.0);
+    }
+    else if (m_pos.y > netPos.y + (height / 2.0))
+    {
+        closestPoint.y = netPos.y + (height / 2.0);
+    }
+    else
+    {
+        closestPoint.y = m_pos.y;
+    }
+
+    netPoint = closestPoint;
+
+    // check if closestPoint is inside the circle
+    glm::vec2 dist = glm::vec2(closestPoint.x - m_pos.x,
+                               closestPoint.y - m_pos.y);
+
+    float len = glm::length(dist);
+
+    if (len <= m_radius)
+    {
+        return true;
+    }
+
+    return false;
 }
 
 void Ball::reset()
@@ -127,5 +188,10 @@ glm::mat3 Ball::getModelMatrix()
     glm::mat3 scale = glm::mat3({0.7, 0, 0}, {0, 0.7, 0}, {0, 0, 1});
 
     return translate * scale;
+}
+
+glm::vec3 Ball::getNetPoint()
+{
+    return netPoint;
 }
 
