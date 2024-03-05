@@ -17,8 +17,11 @@ public:
     Racquet(OpenGLContext* mp_context, glm::vec3 pos0);
 
     glm::mat3 getModelMatrix();
+    void rotateCounterclockwise();
+    void rotateClockwise();
 
     friend class MyGL;
+    friend class Ball;
 };
 
 #endif // RACQUET_H

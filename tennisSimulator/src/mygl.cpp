@@ -33,10 +33,8 @@ MyGL::~MyGL()
 
     m_ball.destroy();
     m_racquet.destroy();
-
     m_geomCourt.destroy();
     m_geomNet.destroy();
-
     m_racquetDebugPoint.destroy();
     m_netDebugPoint.destroy();
 }
@@ -76,6 +74,7 @@ void MyGL::initializeGL()
     // using multiple VAOs, we can just bind one once.
     glBindVertexArray(vao);
 
+    m_ball.racquet = &m_racquet;
     m_racquetDebugPoint.m_pos = m_racquet.m_pos;
     m_netDebugPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
 
@@ -99,15 +98,6 @@ void MyGL::paintGL()
     // background color
     glClearColor(0.23f, 0.44f, 0.62f, 1);
 
-    if (detectRacquetCollision())
-    {
-        m_ball.setColor(glm::vec3(0.969, 0.512, 0.473));
-    }
-    else
-    {
-        m_ball.setColor(glm::vec3(0.84f, 1.0f, 0.15f));
-    }
-
     // ball
     prog_flat.setModelMatrix(m_ball.getBallModelMatrix());
     prog_flat.draw(*this, m_ball);
@@ -118,6 +108,7 @@ void MyGL::paintGL()
     prog_flat.draw(*this, m_racquet);
 
     // debug point visuals
+    m_racquetDebugPoint.m_pos = m_ball.racquetPoint;
     m_racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
     prog_flat.setModelMatrix(m_racquetDebugPoint.getModelMatrix());
     prog_flat.draw(*this, m_racquetDebugPoint);
@@ -126,12 +117,10 @@ void MyGL::paintGL()
     prog_flat.setModelMatrix(m_netDebugPoint.getModelMatrix());
     prog_flat.draw(*this, m_netDebugPoint);
 
-    // tennis court
+    // tennis court/net
     m_geomCourt.setColor(glm::vec3(0.8, 0.8, 0.8));
     prog_flat.setModelMatrix(m_ball.getCourtModelMatrix());
     prog_flat.draw(*this, m_geomCourt);
-
-    // tennis net
     m_geomNet.setColor(glm::vec3(0.8, 0.8, 0.8));
     prog_flat.setModelMatrix(m_ball.getNetModelMatrix());
     prog_flat.draw(*this, m_geomNet);
@@ -221,75 +210,10 @@ void MyGL::keyPressEvent(QKeyEvent *event)
             m_ball.pressedStartStop();
             break;
         case Qt::Key_D:
+            m_racquet.rotateCounterclockwise();
             break;
         case Qt::Key_A:
+            m_racquet.rotateClockwise();
             break;
     }
-}
-
-bool MyGL::detectRacquetCollision()
-{
-    // If the racquet is rotated, we need to rotate the position of
-    // the ball with the opposite, but equal, angle amount w.r.t the
-    // racquet's center so we can perform collision detection as if
-    // the racquet was not rotated.
-
-    // Compute rotated position of ball
-    glm::vec3 ballPos = m_ball.m_pos;
-    glm::vec3 racPos = m_racquet.m_pos;
-    float deg = m_racquet.m_deg;
-    float rad = glm::radians(deg);
-
-    glm::mat3 rotation = glm::mat3({glm::cos(rad), glm::sin(rad), 0.f},
-                                   {-glm::sin(rad), glm::cos(rad), 0.f},
-                                   {0.f, 0.f, 1.f});
-    glm::vec3 rotatedBall = rotation * (ballPos - racPos) + racPos;
-
-    // find the closest point on the racquet to the ball
-
-    float width = m_racquet.m_width;
-    float height = m_racquet.m_height;
-    glm::vec3 closestPoint = glm::vec3();
-
-    if (rotatedBall.x < racPos.x - (width / 2.0))
-    {
-        closestPoint.x = racPos.x - (width / 2.0);
-    }
-    else if (rotatedBall.x > racPos.x + (width / 2.0))
-    {
-        closestPoint.x = racPos.x + (width / 2.0);
-    }
-    else
-    {
-        closestPoint.x = rotatedBall.x;
-    }
-
-    if (rotatedBall.y < racPos.y - (height / 2.0))
-    {
-        closestPoint.y = racPos.y - (height / 2.0);
-    }
-    else if (rotatedBall.y > racPos.y + (height / 2.0))
-    {
-        closestPoint.y = racPos.y + (height / 2.0);
-    }
-    else
-    {
-        closestPoint.y = rotatedBall.y;
-    }
-
-    m_racquetDebugPoint.m_pos = closestPoint;
-
-    // check if closestPoint is inside the circle
-    glm::vec2 dist = glm::vec2(closestPoint.x - rotatedBall.x,
-                               closestPoint.y - rotatedBall.y);
-
-    float len = glm::length(dist);
-    float radius = m_ball.m_radius;
-
-    if (len <= radius)
-    {
-        return true;
-    }
-
-    return false;
 }

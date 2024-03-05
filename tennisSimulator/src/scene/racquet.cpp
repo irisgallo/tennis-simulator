@@ -23,6 +23,15 @@ Racquet::Racquet(OpenGLContext* mp_context, glm::vec3 pos0)
 
 glm::mat3 Racquet::getModelMatrix()
 {
+    // rotate
+    float rad = glm::radians(m_deg);
+    float cos = glm::cos(rad);
+    float sin = glm::sin(rad);
+    glm::vec3 c0 = {cos, sin, 0};
+    glm::vec3 c1 = {-sin, cos, 0};
+    glm::vec3 c2 = {0, 0, 1};
+    glm::mat3 rotate = glm::mat3(c0, c1, c2);
+
     // translate
     glm::vec3 pos = m_pos;
     pos *= 0.1;
@@ -32,13 +41,23 @@ glm::mat3 Racquet::getModelMatrix()
     glm::mat3 scale = glm::mat3({0.7, 0, 0}, {0, 3.0, 0}, {0, 0, 1});
 
     // rotate
-    float rad = glm::radians(45.0);
-    float cos = glm::cos(rad);
-    float sin = glm::sin(rad);
-    glm::vec3 c0 = {cos, sin, 0};
-    glm::vec3 c1 = {-sin, cos, 0};
-    glm::vec3 c2 = {0, 0, 1};
-    glm::mat3 rotate = glm::mat3(c0, c1, c2);
+    rad = glm::radians(45.0);
+    cos = glm::cos(rad);
+    sin = glm::sin(rad);
+    c0 = {cos, sin, 0};
+    c1 = {-sin, cos, 0};
+    c2 = {0, 0, 1};
+    glm::mat3 rotate2 = glm::mat3(c0, c1, c2);
 
-    return translate * scale * rotate;
+    return translate * rotate * scale * rotate2;
+}
+
+void Racquet::rotateCounterclockwise()
+{
+    m_deg += 5.f;
+}
+
+void Racquet::rotateClockwise()
+{
+    m_deg -= 5.f;
 }

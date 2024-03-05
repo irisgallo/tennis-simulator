@@ -3,6 +3,7 @@
 
 #include "glm_includes.h"
 #include "polygon.h"
+#include "racquet.h"
 
 class Ball : public Polygon2D
 {
@@ -14,14 +15,18 @@ protected:
     glm::vec3 m_vel0;
 
     glm::vec3 m_gravity;
-
     float m_radius;
-
     bool isStopped;
 
-    bool detectNetCollision();
     // for debugging
+    glm::vec3 racquetPoint;
     glm::vec3 netPoint;
+
+    Racquet* racquet;
+
+private:
+    bool detectRacquetCollision();
+    bool detectNetCollision();
 
 public:
     Ball(OpenGLContext* mp_context);

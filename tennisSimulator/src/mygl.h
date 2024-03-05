@@ -47,8 +47,6 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
-    bool detectRacquetCollision();
-
 private slots:
     void tick(); // Slot that gets called ~60 times per second by m_timer firing.
 
