@@ -3,6 +3,7 @@
 
 #include "openglcontext.h"
 #include "scene/ball.h"
+#include "scene/debugvertex.h"
 #include "scene/racquet.h"
 #include <shaderprogram.h>
 #include <scene/polygon.h>
@@ -17,28 +18,19 @@ class MyGL : public OpenGLContext
 private:
     ShaderProgram prog_flat;// A shader program that uses "flat" reflection (no shadowing at all)
 
-    // geometry
-    Polygon2D m_geomBall;
-    Polygon2D m_geomRacquet;
+    Ball m_ball;
+    Racquet m_racquet;
     Polygon2D m_geomCourt;
     Polygon2D m_geomNet;
 
-    // for debugging purposes
-    Polygon2D m_displayPoint;
-    Polygon2D m_displayNetPoint;
-    glm::vec3 point;
-    glm::vec3 netPoint;
-
-    Ball m_ball;
-    Racquet m_racquet;
+    // debugging
+    DebugVertex m_racquetDebugPoint;
+    DebugVertex m_netDebugPoint;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 
     QTimer m_timer; // Timer linked to tick(). Fires approximately 60 times per second.
     qint64 prevMSecs;
-
-    glm::mat3 getCourtModelMatrix();
-    glm::mat3 getNetModelMatrix();
 
 public:
     explicit MyGL(QWidget *parent = 0);
@@ -49,8 +41,11 @@ public:
     void paintGL();
 
     void sendSignals(glm::vec3 pos0, glm::vec3 vel0);
+
+protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 
     bool detectRacquetCollision();
 

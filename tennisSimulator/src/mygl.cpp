@@ -9,12 +9,13 @@
 MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
-      m_geomBall(this, 20),
-      m_geomRacquet(this, 4),
+      m_ball(this, glm::vec3(-150.f, -20.f, 0.f),
+               glm::vec3(35.f, 25.f, 0.f)),
+      m_racquet(this, glm::vec3(-160.f, -20.f, 0.f)),
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
-      m_displayPoint(this, 10),
-      m_displayNetPoint(this, 10),
+      m_racquetDebugPoint(this),
+      m_netDebugPoint(this),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -29,12 +30,15 @@ MyGL::~MyGL()
     makeCurrent();
 
     glDeleteVertexArrays(1, &vao);
-    m_geomBall.destroy();
-    m_geomRacquet.destroy();
+
+    m_ball.destroy();
+    m_racquet.destroy();
+
     m_geomCourt.destroy();
     m_geomNet.destroy();
-    m_displayPoint.destroy();
-    m_displayNetPoint.destroy();
+
+    m_racquetDebugPoint.destroy();
+    m_netDebugPoint.destroy();
 }
 
 void MyGL::initializeGL()
@@ -59,12 +63,12 @@ void MyGL::initializeGL()
     // Create a Vertex Attribute Object
     glGenVertexArrays(1, &vao);
 
-    m_geomBall.create();
-    m_geomRacquet.create();
+    m_ball.create();
+    m_racquet.create();
     m_geomCourt.create();
     m_geomNet.create();
-    m_displayPoint.create();
-    m_displayNetPoint.create();
+    m_racquetDebugPoint.create();
+    m_netDebugPoint.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -72,16 +76,10 @@ void MyGL::initializeGL()
     // using multiple VAOs, we can just bind one once.
     glBindVertexArray(vao);
 
-    // initalize our tennis ball and racquet
-    m_ball = Ball(glm::vec3(-150.f, -20.f, 0.f),
-                  glm::vec3(35.f, 25.f, 0.f),
-                  glm::vec3(0.84f, 1.0f, 0.15f));
-    m_racquet = Racquet(glm::vec3(-160.f, -20.f, 0.f),
-                        glm::vec3(0.898f, 0.840, 1.f));
-    point = m_ball.getPosition();
-    netPoint = m_ball.getNetPoint();
+    m_racquetDebugPoint.m_pos = m_racquet.m_pos;
+    m_netDebugPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
 
-    sendSignals(m_ball.getInitialPosition(), m_ball.getInitialVelocity());
+    sendSignals(m_ball.m_pos0, m_ball.m_vel0);
 }
 
 void MyGL::resizeGL(int w, int h)
@@ -103,50 +101,39 @@ void MyGL::paintGL()
 
     if (detectRacquetCollision())
     {
-        m_geomBall.setColor(glm::vec3(0.969, 0.512, 0.473));
-        m_ball.setInitialVelocity(glm::vec3(25.0, 0, 0));
-        m_ball.pressedStartStop();
+        m_ball.setColor(glm::vec3(0.969, 0.512, 0.473));
     }
     else
     {
-        m_geomBall.setColor(m_ball.getColor());
+        m_ball.setColor(glm::vec3(0.84f, 1.0f, 0.15f));
     }
 
     // ball
-    //m_geomCircle.setColor(m_ball.getColor());
-    prog_flat.setModelMatrix(m_ball.getModelMatrix());
-    prog_flat.draw(*this, m_geomBall);
+    prog_flat.setModelMatrix(m_ball.getBallModelMatrix());
+    prog_flat.draw(*this, m_ball);
 
     // racquet
-    m_geomRacquet.setColor(m_racquet.getColor());
+    m_racquet.setColor(glm::vec3(0.898f, 0.840, 1.f));
     prog_flat.setModelMatrix(m_racquet.getModelMatrix());
-    prog_flat.draw(*this, m_geomRacquet);
+    prog_flat.draw(*this, m_racquet);
 
-    // debugging point visual
-    m_displayPoint.setColor(glm::vec3(1, 0, 0));
-
-    glm::mat3 mat = glm::mat3({{0.2, 0, 0},
-                               {0, 0.2, 0},
-                               {0.1 * point.x, 0.1 * point.y, 1}});
-    prog_flat.setModelMatrix(mat);
-    prog_flat.draw(*this, m_displayPoint);
-
-    netPoint = m_ball.getNetPoint();
-    m_displayNetPoint.setColor(glm::vec3(0, 1, 0));
-    mat = glm::mat3({{0.2, 0, 0},
-                     {0, 0.2, 0},
-                     {0.1 * netPoint.x, 0.1 * netPoint.y, 1}});
-    prog_flat.setModelMatrix(mat);
-    prog_flat.draw(*this, m_displayNetPoint);
+    // debug point visuals
+    m_racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
+    prog_flat.setModelMatrix(m_racquetDebugPoint.getModelMatrix());
+    prog_flat.draw(*this, m_racquetDebugPoint);
+    m_netDebugPoint.m_pos = m_ball.netPoint;
+    m_netDebugPoint.setColor(glm::vec3(0, 1, 0));
+    prog_flat.setModelMatrix(m_netDebugPoint.getModelMatrix());
+    prog_flat.draw(*this, m_netDebugPoint);
 
     // tennis court
     m_geomCourt.setColor(glm::vec3(0.8, 0.8, 0.8));
-    prog_flat.setModelMatrix(getCourtModelMatrix());
+    prog_flat.setModelMatrix(m_ball.getCourtModelMatrix());
     prog_flat.draw(*this, m_geomCourt);
 
     // tennis net
     m_geomNet.setColor(glm::vec3(0.8, 0.8, 0.8));
-    prog_flat.setModelMatrix(getNetModelMatrix());
+    prog_flat.setModelMatrix(m_ball.getNetModelMatrix());
     prog_flat.draw(*this, m_geomNet);
 }
 
@@ -176,30 +163,26 @@ void MyGL::slot_reset()
 
 void MyGL::slot_setPX(double px)
 {
-    glm::vec3 pos0 = m_ball.getInitialPosition();
-    pos0[0] = px;
-    m_ball.setInitialPosition(pos0);
+    m_ball.m_pos0[0] = px;
+    m_ball.reset();
 }
 
 void MyGL::slot_setPY(double py)
 {
-    glm::vec3 pos0 = m_ball.getInitialPosition();
-    pos0[1] = py;
-    m_ball.setInitialPosition(pos0);
+    m_ball.m_pos0[1] = py;
+    m_ball.reset();
 }
 
 void MyGL::slot_setVX(double vx)
 {
-    glm::vec3 vel0 = m_ball.getInitialVelocity();
-    vel0[0] = vx;
-    m_ball.setInitialVelocity(vel0);
+    m_ball.m_vel0[0] = vx;
+    m_ball.reset();
 }
 
 void MyGL::slot_setVY(double vy)
 {
-    glm::vec3 vel0 = m_ball.getInitialVelocity();
-    vel0[1] = vy;
-    m_ball.setInitialVelocity(vel0);
+    m_ball.m_vel0[1] = vy;
+    m_ball.reset();
 }
 
 void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0)
@@ -225,9 +208,23 @@ void MyGL::mouseMoveEvent(QMouseEvent *event)
     float xAtMove = (event->position().x() - 450.0) * (4.0 / 9.0);
     float yAtMove = (event->position().y() - 300.0) * (-4.0 / 9.0);
 
-    m_racquet.setPosition(glm::vec3(xAtMove, yAtMove, 0.f));
+    m_racquet.m_pos = glm::vec3(xAtMove, yAtMove, 0.f);
 
     event->accept();
+}
+
+void MyGL::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key())
+    {
+        case Qt::Key_Space:
+            m_ball.pressedStartStop();
+            break;
+        case Qt::Key_D:
+            break;
+        case Qt::Key_A:
+            break;
+    }
 }
 
 bool MyGL::detectRacquetCollision()
@@ -238,9 +235,10 @@ bool MyGL::detectRacquetCollision()
     // the racquet was not rotated.
 
     // Compute rotated position of ball
-    glm::vec3 ballPos = m_ball.getPosition();
-    glm::vec3 racPos = m_racquet.getPosition();
-    float rad = glm::radians(m_racquet.getAngle());
+    glm::vec3 ballPos = m_ball.m_pos;
+    glm::vec3 racPos = m_racquet.m_pos;
+    float deg = m_racquet.m_deg;
+    float rad = glm::radians(deg);
 
     glm::mat3 rotation = glm::mat3({glm::cos(rad), glm::sin(rad), 0.f},
                                    {-glm::sin(rad), glm::cos(rad), 0.f},
@@ -249,8 +247,8 @@ bool MyGL::detectRacquetCollision()
 
     // find the closest point on the racquet to the ball
 
-    float width = m_racquet.getWidth();
-    float height = m_racquet.getHeight();
+    float width = m_racquet.m_width;
+    float height = m_racquet.m_height;
     glm::vec3 closestPoint = glm::vec3();
 
     if (rotatedBall.x < racPos.x - (width / 2.0))
@@ -279,14 +277,14 @@ bool MyGL::detectRacquetCollision()
         closestPoint.y = rotatedBall.y;
     }
 
-    point = closestPoint;
+    m_racquetDebugPoint.m_pos = closestPoint;
 
     // check if closestPoint is inside the circle
     glm::vec2 dist = glm::vec2(closestPoint.x - rotatedBall.x,
                                closestPoint.y - rotatedBall.y);
 
     float len = glm::length(dist);
-    float radius = m_ball.getRadius();
+    float radius = m_ball.m_radius;
 
     if (len <= radius)
     {
@@ -295,49 +293,3 @@ bool MyGL::detectRacquetCollision()
 
     return false;
 }
-
-glm::mat3 MyGL::getCourtModelMatrix()
-{
-    // translate
-    glm::vec3 pos = glm::vec3(0.f, -110.f, 0.f);
-    pos *= 0.1;
-    glm::mat3 translate = glm::mat3({1, 0, 0}, {0, 1, 0}, pos);
-
-    // scale
-    glm::mat3 scale = glm::mat3({57.0, 0, 0}, {0, 8.0, 0}, {0, 0, 1});
-
-    // rotate
-    float rad = glm::radians(45.0);
-    float cos = glm::cos(rad);
-    float sin = glm::sin(rad);
-    glm::vec3 c0 = {cos, sin, 0};
-    glm::vec3 c1 = {-sin, cos, 0};
-    glm::vec3 c2 = {0, 0, 1};
-    glm::mat3 rotate = glm::mat3(c0, c1, c2);
-
-    return translate * scale * rotate;
-}
-
-glm::mat3 MyGL::getNetModelMatrix()
-{
-    // translate
-    glm::vec3 pos = glm::vec3(0.f, -68.f, 0.f);
-    pos *= 0.1;
-    glm::mat3 translate = glm::mat3({1, 0, 0}, {0, 1, 0}, pos);
-
-    // scale
-    glm::mat3 scale = glm::mat3({1.0, 0, 0}, {0, 4.0, 0}, {0, 0, 1});
-
-    // rotate
-    float rad = glm::radians(45.0);
-    float cos = glm::cos(rad);
-    float sin = glm::sin(rad);
-    glm::vec3 c0 = {cos, sin, 0};
-    glm::vec3 c1 = {-sin, cos, 0};
-    glm::vec3 c2 = {0, 0, 1};
-    glm::mat3 rotate = glm::mat3(c0, c1, c2);
-
-    return translate * scale * rotate;
-}
-
-

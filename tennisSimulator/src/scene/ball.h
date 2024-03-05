@@ -2,8 +2,9 @@
 #define BALL_H
 
 #include "glm_includes.h"
+#include "polygon.h"
 
-class Ball
+class Ball : public Polygon2D
 {
 protected:
     glm::vec3 m_pos;
@@ -12,7 +13,6 @@ protected:
     glm::vec3 m_pos0;
     glm::vec3 m_vel0;
 
-    glm::vec3 m_color;
     glm::vec3 m_gravity;
 
     float m_radius;
@@ -24,10 +24,8 @@ protected:
     glm::vec3 netPoint;
 
 public:
-    Ball();
-    Ball(glm::vec3 pos0, glm::vec3 vel0, glm::vec3 color);
-    Ball(const Ball &ball);
-    virtual ~Ball();
+    Ball(OpenGLContext* mp_context);
+    Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0);
 
     // To be called by MyGL::tick()
     void tick(float dT);
@@ -35,20 +33,11 @@ public:
     void reset();
     void pressedStartStop();
 
-    glm::vec3 getPosition();
-    void setPosition(glm::vec3 pos);
-    glm::vec3 getColor();
-    void setColor(glm::vec3 color);
-    float getRadius();
+    glm::mat3 getBallModelMatrix();
+    glm::mat3 getCourtModelMatrix();
+    glm::mat3 getNetModelMatrix();
 
-    glm::vec3 getInitialPosition();
-    void setInitialPosition(glm::vec3 pos0);
-    glm::vec3 getInitialVelocity();
-    void setInitialVelocity(glm::vec3 vel0);
-    glm::mat3 getModelMatrix();
-
-    // for debugging purposes
-    glm::vec3 getNetPoint();
+    friend class MyGL;
 };
 
 #endif // BALL_H

@@ -5,23 +5,15 @@
 #define GRAVITY 9.8f
 #endif
 
-Ball::Ball() : Ball(glm::vec3(), glm::vec3(), glm::vec3(0))
+Ball::Ball(OpenGLContext* mp_context)
+    : Ball(mp_context, glm::vec3(), glm::vec3())
 {}
 
-Ball::Ball(glm::vec3 pos0, glm::vec3 vel0, glm::vec3 color)
-    : m_pos(pos0), m_vel(vel0), m_pos0(pos0), m_vel0(vel0),
-      m_color(color), m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
+Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0)
+    : Polygon2D(mp_context, 20), m_pos(pos0), m_vel(vel0),
+      m_pos0(pos0), m_vel0(vel0),
+      m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
       m_radius(3.5), isStopped(true), netPoint(glm::vec3())
-{}
-
-Ball::Ball(const Ball &ball)
-    : m_pos(ball.m_pos), m_vel(ball.m_vel), m_pos0(ball.m_pos0),
-      m_vel0(ball.m_vel0), m_color(ball.m_color),
-      m_gravity(ball.m_gravity), m_radius(ball.m_radius),
-      isStopped(ball.isStopped), netPoint(ball.netPoint)
-{}
-
-Ball::~Ball()
 {}
 
 void Ball::tick(float dT)
@@ -56,13 +48,13 @@ void Ball::tick(float dT)
     // detect net collision
     if (detectNetCollision())
     {
-        m_color = glm::vec3(0, 1, 0);
+        setColor(glm::vec3(0, 1, 0));
         m_vel.x *= -1;
         m_pos += scaledTime * m_vel;
         return;
     }
 
-    m_color = glm::vec3(0.84f, 1.0f, 0.15f);
+    setColor(glm::vec3(0.84f, 1.0f, 0.15f));
     m_pos += scaledTime * m_vel;
     m_vel += scaledTime * m_gravity;
 }
@@ -130,57 +122,10 @@ void Ball::pressedStartStop()
     isStopped = !isStopped;
 }
 
-glm::vec3 Ball::getPosition()
-{
-    return m_pos;
-}
-
-void Ball::setPosition(glm::vec3 pos)
-{
-    m_pos = pos;
-}
-
-glm::vec3 Ball::getColor()
-{
-    return m_color;
-}
-
-void Ball::setColor(glm::vec3 color)
-{
-    m_color = color;
-}
-
-float Ball::getRadius()
-{
-    return m_radius;
-}
-
-glm::vec3 Ball::getInitialPosition()
-{
-    return m_pos0;
-}
-
-void Ball::setInitialPosition(glm::vec3 pos0)
-{
-    m_pos0 = pos0;
-    reset();
-}
-
-glm::vec3 Ball::getInitialVelocity()
-{
-    return m_vel0;
-}
-
-void Ball::setInitialVelocity(glm::vec3 vel0)
-{
-    m_vel0 = vel0;
-    reset();
-}
-
-glm::mat3 Ball::getModelMatrix()
+glm::mat3 Ball::getBallModelMatrix()
 {
     // translate
-    glm::vec3 pos = getPosition();
+    glm::vec3 pos = m_pos;
     pos *= 0.1;
     glm::mat3 translate = glm::mat3({1, 0, 0}, {0, 1, 0}, pos);
 
@@ -190,8 +135,48 @@ glm::mat3 Ball::getModelMatrix()
     return translate * scale;
 }
 
-glm::vec3 Ball::getNetPoint()
+glm::mat3 Ball::getCourtModelMatrix()
 {
-    return netPoint;
+    // translate
+    glm::vec3 pos = glm::vec3(0.f, -110.f, 0.f);
+    pos *= 0.1;
+    glm::mat3 translate = glm::mat3({1, 0, 0}, {0, 1, 0}, pos);
+
+    // scale
+    glm::mat3 scale = glm::mat3({57.0, 0, 0}, {0, 8.0, 0}, {0, 0, 1});
+
+    // rotate
+    float rad = glm::radians(45.0);
+    float cos = glm::cos(rad);
+    float sin = glm::sin(rad);
+    glm::vec3 c0 = {cos, sin, 0};
+    glm::vec3 c1 = {-sin, cos, 0};
+    glm::vec3 c2 = {0, 0, 1};
+    glm::mat3 rotate = glm::mat3(c0, c1, c2);
+
+    return translate * scale * rotate;
 }
+
+glm::mat3 Ball::getNetModelMatrix()
+{
+    // translate
+    glm::vec3 pos = glm::vec3(0.f, -68.f, 0.f);
+    pos *= 0.1;
+    glm::mat3 translate = glm::mat3({1, 0, 0}, {0, 1, 0}, pos);
+
+    // scale
+    glm::mat3 scale = glm::mat3({1.0, 0, 0}, {0, 4.0, 0}, {0, 0, 1});
+
+    // rotate
+    float rad = glm::radians(45.0);
+    float cos = glm::cos(rad);
+    float sin = glm::sin(rad);
+    glm::vec3 c0 = {cos, sin, 0};
+    glm::vec3 c1 = {-sin, cos, 0};
+    glm::vec3 c2 = {0, 0, 1};
+    glm::mat3 rotate = glm::mat3(c0, c1, c2);
+
+    return translate * scale * rotate;
+}
+
 
