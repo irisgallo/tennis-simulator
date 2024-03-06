@@ -27,6 +27,10 @@ private:
     bool detectRacquetCollision();
     bool detectNetCollision();
 
+    void hitBall();
+
+    glm::mat3 generateRotationMatrix(float rad);
+
 public:
     Ball(OpenGLContext* mp_context);
     Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0);

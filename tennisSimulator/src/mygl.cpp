@@ -9,8 +9,8 @@
 MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
-      m_ball(this, glm::vec3(-150.f, -20.f, 0.f),
-               glm::vec3(35.f, 25.f, 0.f)),
+      m_ball(this, glm::vec3(-150.f, 50.f, 0.f),
+               glm::vec3(0.f, 25.f, 0.f)),
       m_racquet(this, glm::vec3(-160.f, -20.f, 0.f)),
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
@@ -200,7 +200,7 @@ void MyGL::mousePressEvent(QMouseEvent *event)
     float xAtPress = (event->position().x() - 450.0) * (4.0 / 9.0);
     float yAtPress = (event->position().y() - 300.0) * (-4.0 / 9.0);
 
-    std::cerr << "x: " << xAtPress << ", y: " << yAtPress << "\n";
+    //std::cerr << "x: " << xAtPress << ", y: " << yAtPress << "\n";
 
     event->accept();
 }
@@ -212,11 +212,10 @@ void MyGL::mouseMoveEvent(QMouseEvent *event)
 
     glm::vec3 currPos = glm::vec3(xAtMove, yAtMove, 0.f);
 
-    m_racquet.m_vel = currPos - m_racquet.m_pos;
-    m_racquet.m_vel /= 0.5;
+    m_racquet.m_vel = (currPos - m_racquet.m_pos) * 2.f;
 
-    std::cerr << "vx: " << m_racquet.m_vel.x
-              << ", vy: " << m_racquet.m_vel.y << "\n";
+    // std::cerr << "vx: " << m_racquet.m_vel.x
+    //           << ", vy: " << m_racquet.m_vel.y << "\n";
 
     m_racquet.m_pos = currPos;
 
