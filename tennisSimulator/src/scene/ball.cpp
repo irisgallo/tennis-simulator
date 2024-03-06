@@ -138,14 +138,17 @@ bool Ball::detectRacquetCollision()
     // racquet's center so we can perform collision detection as if
     // the racquet was not rotated.
 
+    // racquet's rotated local axis
+    float deg = racquet->m_deg;
+    float rad = glm::radians(deg);
+    glm::vec2 rotatedX = glm::vec2(glm::cos(rad), glm::sin(rad));
+    glm::vec2 rotatedY = glm::vec2(-glm::sin(rad), glm::cos(rad));
+
     // Compute rotated position of ball
     glm::vec3 ballPos = m_pos;
     glm::vec3 racPos = racquet->m_pos;
-    float deg = racquet->m_deg;
-    float rad = glm::radians(deg);
-
-    glm::mat3 rotation = glm::mat3({glm::cos(rad), glm::sin(rad), 0.f},
-                                   {-glm::sin(rad), glm::cos(rad), 0.f},
+    glm::mat3 rotation = glm::mat3({glm::cos(-rad), glm::sin(-rad), 0.f},
+                                   {-glm::sin(-rad), glm::cos(-rad), 0.f},
                                    {0.f, 0.f, 1.f});
     glm::vec3 rotatedBall = rotation * (ballPos - racPos) + racPos;
 
@@ -181,11 +184,16 @@ bool Ball::detectRacquetCollision()
         closestPoint.y = rotatedBall.y;
     }
 
-    racquetPoint = closestPoint;
+    rotation = glm::mat3({glm::cos(rad), glm::sin(rad), 0.f},
+                         {-glm::sin(rad), glm::cos(rad), 0.f},
+                         {0.f, 0.f, 1.f});
+    glm::vec3 unrotatedClosestPoint = rotation * (closestPoint - racPos) + racPos;
+
+    racquetPoint = unrotatedClosestPoint;
 
     // check if closestPoint is inside the circle
-    glm::vec2 dist = glm::vec2(closestPoint.x - rotatedBall.x,
-                               closestPoint.y - rotatedBall.y);
+    glm::vec2 dist = glm::vec2(racquetPoint.x - m_pos.x,
+                               racquetPoint.y - m_pos.y);
 
     float len = glm::length(dist);
     float radius = m_radius;
