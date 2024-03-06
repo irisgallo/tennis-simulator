@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent) :
             physicsControls, SLOT(slot_setPos(double, double)));
     connect(ui->mygl, SIGNAL(sig_sendVel(double, double)),
             physicsControls, SLOT(slot_setVel(double, double)));
+    connect(ui->mygl, SIGNAL(sig_sendHitVelocity(double, double)),
+            physicsControls, SLOT(slot_setHitVelocity(double, double)));
 }
 
 MainWindow::~MainWindow()

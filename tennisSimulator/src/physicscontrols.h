@@ -26,6 +26,7 @@ public slots:
     void slot_setVY(double vy);
     void slot_setPos(double px, double py);
     void slot_setVel(double vx, double vy);
+    void slot_setHitVelocity(double hx, double hy);
 
 
 signals:

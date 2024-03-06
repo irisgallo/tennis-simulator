@@ -6,7 +6,7 @@ Racquet::Racquet(OpenGLContext* mp_context)
 
 Racquet::Racquet(OpenGLContext* mp_context, glm::vec3 pos0)
     : Polygon2D(mp_context, 4), m_pos(pos0), m_vel(glm::vec3()),
-      m_width(4.97), m_height(21.3), m_deg(0.0),
+      m_width(4.97), m_height(21.3), m_deg(0.0), m_mass(0.3),
       closestPoint(glm::vec3()), closestNormal(glm::vec3())
 {
     // Vertex positions

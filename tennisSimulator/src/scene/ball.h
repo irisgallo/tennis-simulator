@@ -16,12 +16,16 @@ protected:
 
     glm::vec3 m_gravity;
     float m_radius;
+    float m_mass;
+
     bool isStopped;
+    bool hasCollision;
 
     // for debugging
     glm::vec3 netPoint;
 
     Racquet* racquet;
+    glm::vec2 m_hitVelocity;
 
 private:
     bool detectRacquetCollision();
@@ -44,6 +48,9 @@ public:
     glm::mat3 getBallModelMatrix();
     glm::mat3 getCourtModelMatrix();
     glm::mat3 getNetModelMatrix();
+
+signals:
+    void sig_sendHitVelocity(double, double);
 
     friend class MyGL;
 };

@@ -151,6 +151,9 @@ void MyGL::tick() {
     prevMSecs = currMSecs;
 
     m_ball.tick(dT);
+
+    emit sig_sendHitVelocity(m_ball.m_hitVelocity.x,
+                             m_ball.m_hitVelocity.y);
 }
 
 void MyGL::slot_setStartStop()
@@ -195,16 +198,6 @@ void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0)
 
 // screen space is ([0:900], [0:600])
 // world space is ([-200:200], [-133:133])
-void MyGL::mousePressEvent(QMouseEvent *event)
-{
-    float xAtPress = (event->position().x() - 450.0) * (4.0 / 9.0);
-    float yAtPress = (event->position().y() - 300.0) * (-4.0 / 9.0);
-
-    //std::cerr << "x: " << xAtPress << ", y: " << yAtPress << "\n";
-
-    event->accept();
-}
-
 void MyGL::mouseMoveEvent(QMouseEvent *event)
 {
     float xAtMove = (event->position().x() - 450.0) * (4.0 / 9.0);
@@ -212,11 +205,7 @@ void MyGL::mouseMoveEvent(QMouseEvent *event)
 
     glm::vec3 currPos = glm::vec3(xAtMove, yAtMove, 0.f);
 
-    m_racquet.m_vel = (currPos - m_racquet.m_pos) * 2.f;
-
-    // std::cerr << "vx: " << m_racquet.m_vel.x
-    //           << ", vy: " << m_racquet.m_vel.y << "\n";
-
+    m_racquet.m_vel = (currPos - m_racquet.m_pos) * 6.f;
     m_racquet.m_pos = currPos;
 
     event->accept();

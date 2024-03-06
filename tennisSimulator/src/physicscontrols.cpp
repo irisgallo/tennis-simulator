@@ -64,6 +64,12 @@ void PhysicsControls::slot_setVel(double vx, double vy)
     ui->vySpinBox->setValue(vy);
 }
 
+void PhysicsControls::slot_setHitVelocity(double hx, double hy)
+{
+    ui->hxSpinBox->setValue(hx);
+    ui->hySpinBox->setValue(hy);
+}
+
 PhysicsControls::~PhysicsControls()
 {
     delete ui;

@@ -13,14 +13,17 @@ Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0)
     : Polygon2D(mp_context, 20), m_pos(pos0), m_vel(glm::vec3()),
       m_pos0(pos0), m_vel0(vel0),
       m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
-      m_radius(3.5), isStopped(true),
-      netPoint(glm::vec3()), racquet(nullptr)
+      m_radius(3.5), m_mass(0.057), isStopped(true), hasCollision(false),
+      netPoint(glm::vec3()), racquet(nullptr), m_hitVelocity(glm::vec3())
 {}
 
 void Ball::tick(float dT) {
 
-    if (detectRacquetCollision()) {
-        hitBall();
+    if (!hasCollision) {
+        if (detectRacquetCollision()) {
+            hitBall();
+            hasCollision = true;
+        }
     }
 
     if (isStopped) {
@@ -39,11 +42,13 @@ void Ball::tick(float dT) {
     if (m_pos.y - m_radius <= -81.1) {
         m_vel.y *= -1;
         m_pos += scaledTime * m_vel;
+        hasCollision = false;
         return;
     }
     if (m_pos.x + m_radius >= 199.0 || m_pos.x - m_radius <= -199.0) {
         m_vel.x *= -1;
         m_pos += scaledTime * m_vel;
+        hasCollision = false;
         return;
     }
 
@@ -51,6 +56,7 @@ void Ball::tick(float dT) {
     if (detectNetCollision()) {
         m_vel.x *= -1;
         m_pos += scaledTime * m_vel;
+        hasCollision = false;
         return;
     }
 
@@ -257,18 +263,23 @@ void Ball::hitBall() {
 
     std::cerr << "racquet vel: (" << racquet->m_vel.x << ", " << racquet->m_vel.y << ")\n";
     // Convert ball's velocity to the racquet's frame of reference
-    glm::vec3 ballVelR = m_vel + (-racquet->m_vel);
+    // take the masses of the ball and racquet into account
+    float ratio = racquet->m_mass / m_mass;
+    glm::vec3 ballVelR = (m_vel + (-racquet->m_mass * ratio)) / (ratio + 1);
 
     std::cerr << "ball velocity R: (" << ballVelR.x << ", " << ballVelR.y << ")\n";
 
     // Compute angle between ball's velocity and the racquet's normal
     float dot = glm::dot(racquet->closestNormal, -ballVelR);
-    float angle = glm::acos(dot / glm::length(ballVelR));
+    dot /= (glm::length(ballVelR) * glm::length(racquet->closestNormal));
+    float angle = glm::acos(dot);
     float deg = glm::degrees(angle);
     if (deg >= 90) {
         deg -= 90;
     }
     angle = glm::radians(deg);
+    std::cerr << "dot: " << dot << "\n";
+    std::cerr << "radian: " << angle << "\n";
     std::cerr << "angle: " << deg << "\n";
 
     // Rotate ball's velocity vector about closestPoint, following law of reflectance
@@ -281,6 +292,8 @@ void Ball::hitBall() {
     glm::vec3 newVel = newVelR + racquet->m_vel;
 
     m_vel = newVel;
+
+    m_hitVelocity = glm::vec2(m_vel.x, m_vel.y);
 
     std::cerr << "new velocity: (" << m_vel.x << ", " << m_vel.y << ")\n";
 }

@@ -44,7 +44,6 @@ public:
     void sendSignals(glm::vec3 pos0, glm::vec3 vel0);
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
@@ -62,6 +61,7 @@ public slots:
 signals:
     void sig_sendPos(double, double);
     void sig_sendVel(double, double);
+    void sig_sendHitVelocity(double, double);
 };
 
 #endif // MYGL_H

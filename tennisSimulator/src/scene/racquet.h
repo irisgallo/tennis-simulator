@@ -13,6 +13,7 @@ protected:
     float m_width;
     float m_height;
     float m_deg;
+    float m_mass;
 
     glm::vec3 closestPoint;
     glm::vec3 closestNormal; // the normal of the racquet at the closestPoint
