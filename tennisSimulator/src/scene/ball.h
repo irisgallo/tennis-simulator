@@ -19,7 +19,6 @@ protected:
     bool isStopped;
 
     // for debugging
-    glm::vec3 racquetPoint;
     glm::vec3 netPoint;
 
     Racquet* racquet;

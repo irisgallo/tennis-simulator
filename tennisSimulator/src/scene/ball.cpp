@@ -13,7 +13,7 @@ Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0)
     : Polygon2D(mp_context, 20), m_pos(pos0), m_vel(vel0),
       m_pos0(pos0), m_vel0(vel0),
       m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
-      m_radius(3.5), isStopped(true), racquetPoint(glm::vec3()),
+      m_radius(3.5), isStopped(true),
       netPoint(glm::vec3()), racquet(nullptr)
 {}
 
@@ -157,43 +157,84 @@ bool Ball::detectRacquetCollision()
     float width = racquet->m_width;
     float height = racquet->m_height;
     glm::vec3 closestPoint = glm::vec3();
+    glm::vec3 closestNormal = glm::vec3();
+    int normalDeg = -1;
 
     if (rotatedBall.x < racPos.x - (width / 2.0))
     {
         closestPoint.x = racPos.x - (width / 2.0);
+        closestNormal.x = -1.f;
+        normalDeg = 180;
     }
     else if (rotatedBall.x > racPos.x + (width / 2.0))
     {
         closestPoint.x = racPos.x + (width / 2.0);
+        closestNormal.x = 1.f;
+        normalDeg = 0;
     }
     else
     {
         closestPoint.x = rotatedBall.x;
+        closestNormal.x = 0.f;
+        normalDeg = -1;
     }
 
     if (rotatedBall.y < racPos.y - (height / 2.0))
     {
         closestPoint.y = racPos.y - (height / 2.0);
+        closestNormal.y = -1.f;
+        if (normalDeg == 0)
+        {
+            normalDeg = 315;
+        }
+        else if (normalDeg == 180)
+        {
+            normalDeg = 225;
+        }
+        else
+        {
+            normalDeg = 270;
+        }
     }
     else if (rotatedBall.y > racPos.y + (height / 2.0))
     {
         closestPoint.y = racPos.y + (height / 2.0);
+        closestNormal.y = 1.f;
+        if (normalDeg == 0)
+        {
+            normalDeg = 45;
+        }
+        else if (normalDeg == 180)
+        {
+            normalDeg = 135;
+        }
+        else
+        {
+            normalDeg = 90;
+        }
     }
     else
     {
         closestPoint.y = rotatedBall.y;
+        closestNormal.y = 0.f;
+        if (normalDeg == -1)
+        {
+            normalDeg = 0;
+        }
     }
 
     rotation = glm::mat3({glm::cos(rad), glm::sin(rad), 0.f},
                          {-glm::sin(rad), glm::cos(rad), 0.f},
                          {0.f, 0.f, 1.f});
-    glm::vec3 unrotatedClosestPoint = rotation * (closestPoint - racPos) + racPos;
-
-    racquetPoint = unrotatedClosestPoint;
+    // rotate back the closestPoint and closestNormal
+    racquet->closestPoint = rotation * (closestPoint - racPos) + racPos;
+    normalDeg += deg;
+    float nRad = glm::radians(normalDeg * 1.0);
+    racquet->closestNormal = glm::vec3(glm::cos(nRad), glm::sin(nRad), 1);
 
     // check if closestPoint is inside the circle
-    glm::vec2 dist = glm::vec2(racquetPoint.x - m_pos.x,
-                               racquetPoint.y - m_pos.y);
+    glm::vec2 dist = glm::vec2(racquet->closestPoint.x - m_pos.x,
+                               racquet->closestPoint.y - m_pos.y);
 
     float len = glm::length(dist);
     float radius = m_radius;

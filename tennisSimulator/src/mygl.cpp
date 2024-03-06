@@ -16,6 +16,7 @@ MyGL::MyGL(QWidget *parent)
       m_geomNet(this, 4),
       m_racquetDebugPoint(this),
       m_netDebugPoint(this),
+      m_normalDebugPoint(this),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -37,6 +38,7 @@ MyGL::~MyGL()
     m_geomNet.destroy();
     m_racquetDebugPoint.destroy();
     m_netDebugPoint.destroy();
+    m_normalDebugPoint.destroy();
 }
 
 void MyGL::initializeGL()
@@ -67,6 +69,7 @@ void MyGL::initializeGL()
     m_geomNet.create();
     m_racquetDebugPoint.create();
     m_netDebugPoint.create();
+    m_normalDebugPoint.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -77,6 +80,7 @@ void MyGL::initializeGL()
     m_ball.racquet = &m_racquet;
     m_racquetDebugPoint.m_pos = m_racquet.m_pos;
     m_netDebugPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
+    m_normalDebugPoint.m_pos = m_racquet.m_pos;
 
     sendSignals(m_ball.m_pos0, m_ball.m_vel0);
 }
@@ -108,14 +112,23 @@ void MyGL::paintGL()
     prog_flat.draw(*this, m_racquet);
 
     // debug point visuals
-    m_racquetDebugPoint.m_pos = m_ball.racquetPoint;
+    m_racquetDebugPoint.m_pos = m_racquet.closestPoint;
     m_racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
     prog_flat.setModelMatrix(m_racquetDebugPoint.getModelMatrix());
     prog_flat.draw(*this, m_racquetDebugPoint);
+
     m_netDebugPoint.m_pos = m_ball.netPoint;
     m_netDebugPoint.setColor(glm::vec3(0, 1, 0));
     prog_flat.setModelMatrix(m_netDebugPoint.getModelMatrix());
     prog_flat.draw(*this, m_netDebugPoint);
+
+    m_normalDebugPoint.m_pos = m_racquet.closestNormal;
+    m_normalDebugPoint.m_pos *= 10;
+    m_normalDebugPoint.m_pos += m_racquet.closestPoint;
+    m_normalDebugPoint.setColor(glm::vec3(0, 0, 1));
+    prog_flat.setModelMatrix(m_normalDebugPoint.getModelMatrix());
+    prog_flat.draw(*this, m_normalDebugPoint);
+
 
     // tennis court/net
     m_geomCourt.setColor(glm::vec3(0.8, 0.8, 0.8));
@@ -197,7 +210,15 @@ void MyGL::mouseMoveEvent(QMouseEvent *event)
     float xAtMove = (event->position().x() - 450.0) * (4.0 / 9.0);
     float yAtMove = (event->position().y() - 300.0) * (-4.0 / 9.0);
 
-    m_racquet.m_pos = glm::vec3(xAtMove, yAtMove, 0.f);
+    glm::vec3 currPos = glm::vec3(xAtMove, yAtMove, 0.f);
+
+    m_racquet.m_vel = currPos - m_racquet.m_pos;
+    m_racquet.m_vel /= 0.5;
+
+    std::cerr << "vx: " << m_racquet.m_vel.x
+              << ", vy: " << m_racquet.m_vel.y << "\n";
+
+    m_racquet.m_pos = currPos;
 
     event->accept();
 }
