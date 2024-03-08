@@ -4,6 +4,7 @@
 #include "openglcontext.h"
 #include "scene/ball.h"
 #include "scene/debugvertex.h"
+#include "scene/debugvector.h"
 #include "scene/racquet.h"
 #include <shaderprogram.h>
 #include <scene/polygon.h>
@@ -26,7 +27,7 @@ private:
     // debugging
     DebugVertex m_racquetDebugPoint;
     DebugVertex m_netDebugPoint;
-    DebugVertex m_normalDebugPoint;
+    DebugVector m_racquetNormal;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 

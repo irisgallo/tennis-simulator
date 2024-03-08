@@ -40,6 +40,8 @@ Polygon2D::Polygon2D(OpenGLContext* context, const std::vector<glm::vec3>& posit
 
 void Polygon2D::create()
 {
+    this->setMode(GL_TRIANGLES);
+
     // Track our index count in a member variable
     // to be read by ShaderProgram::draw().
     m_count = m_vertIdx.size();

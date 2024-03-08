@@ -69,6 +69,7 @@ void Ball::reset() {
     m_pos = m_pos0;
     m_vel = m_vel0;
     isStopped = true;
+    hasCollision = false;
 }
 
 void Ball::pressedStartStop() {

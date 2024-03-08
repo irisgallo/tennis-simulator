@@ -9,6 +9,7 @@ SOURCES += \
     $$PWD/openglcontext.cpp \
     $$PWD/physicscontrols.cpp \
     $$PWD/scene/ball.cpp \
+    $$PWD/scene/debugvector.cpp \
     $$PWD/scene/debugvertex.cpp \
     $$PWD/scene/polygon.cpp \
     $$PWD/scene/racquet.cpp \
@@ -23,6 +24,7 @@ HEADERS += \
     $$PWD/openglcontext.h \
     $$PWD/physicscontrols.h \
     $$PWD/scene/ball.h \
+    $$PWD/scene/debugvector.h \
     $$PWD/scene/debugvertex.h \
     $$PWD/scene/polygon.h \
     $$PWD/scene/racquet.h \

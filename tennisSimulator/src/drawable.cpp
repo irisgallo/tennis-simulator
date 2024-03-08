@@ -25,7 +25,12 @@ GLenum Drawable::drawMode()
     // read to draw our Drawable, we tell that the draw mode
     // of this Drawable is GL_TRIANGLES
 
-    return GL_TRIANGLES;
+    return mode;
+}
+
+void Drawable::setMode(GLenum m)
+{
+    mode = m;
 }
 
 int Drawable::elemCount()

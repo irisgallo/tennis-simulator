@@ -25,6 +25,8 @@ DebugVertex::DebugVertex(OpenGLContext *mp_context)
 
 void DebugVertex::create()
 {
+    this->setMode(GL_TRIANGLES);
+
     m_count = m_vertIdx.size();
     m_numVertices = m_vertPos.size();
 
