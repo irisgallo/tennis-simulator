@@ -5,6 +5,14 @@
 #define GRAVITY 9.8f
 #endif
 
+#ifndef PI
+#define PI 3.14159265f
+#endif
+
+#ifndef RHO
+#define RHO 1.293
+#endif
+
 Ball::Ball(OpenGLContext* mp_context)
     : Ball(mp_context, glm::vec3(), glm::vec3(), 0.f)
 {}
@@ -13,20 +21,18 @@ Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0,
            glm::vec3 vel0, float angVel0)
     : Polygon2D(mp_context, 20), m_pos(pos0), m_vel(glm::vec3()),
       m_pos0(pos0), m_vel0(vel0),
-      m_deg(0.f), m_angVel(0.f), m_angVel0(angVel0),
-      m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
-      m_radius(3.5), m_mass(0.057), isStopped(true),
+      m_deg(0.f), m_angVel(angVel0), m_angVel0(angVel0),
+      f_gravity(glm::vec3(0.0, -GRAVITY, 0.0)), f_drag(), f_lift(),
+      f_total(), m_radius(3.5), m_mass(5.7), isStopped(true),
       hasCollision(false), netPoint(glm::vec3()), racquet(nullptr),
       m_hitVelocity(glm::vec3())
 {}
 
 void Ball::tick(float dT) {
 
-    if (!hasCollision) {
-        if (detectRacquetCollision()) {
-            hitBall();
-            hasCollision = true;
-        }
+    if (detectRacquetCollision() && !hasCollision) {
+        hitBall();
+        hasCollision = true;
     }
 
     float scaledTime = 0.003 * dT;
@@ -63,14 +69,22 @@ void Ball::tick(float dT) {
         return;
     }
 
+    computeForces();
+
     m_pos += scaledTime * m_vel;
-    m_vel += scaledTime * m_gravity;
+    m_vel += scaledTime * (f_total / m_mass);
+    m_deg += scaledTime * m_angVel;
+    if (m_deg >= 360.0) {
+        m_deg -= 360.0;
+    }
+
 }
 
 void Ball::reset() {
 
     m_pos = m_pos0;
     m_vel = m_vel0;
+    m_angVel = m_angVel0;
     isStopped = true;
     hasCollision = false;
 }
@@ -220,7 +234,7 @@ bool Ball::detectRacquetCollision() {
 
     float len = glm::length(dist);
     if (len <= m_radius) {
-        setColor(glm::vec3(0.969, 0.512, 0.473));
+        setColor(glm::vec3(0.594, 1.0, 0.594));
         return true;
     }
 
@@ -270,13 +284,10 @@ bool Ball::detectNetCollision() {
 
 void Ball::hitBall() {
 
-    std::cerr << "racquet vel: (" << racquet->m_vel.x << ", " << racquet->m_vel.y << ")\n";
     // Convert ball's velocity to the racquet's frame of reference
     // take the masses of the ball and racquet into account
     float ratio = racquet->m_mass / m_mass;
     glm::vec3 ballVelR = (m_vel + (-racquet->m_mass * ratio)) / (ratio + 1);
-
-    std::cerr << "ball velocity R: (" << ballVelR.x << ", " << ballVelR.y << ")\n";
 
     // Compute angle between ball's velocity and the racquet's normal
     float dot = glm::dot(racquet->closestNormal, -ballVelR);
@@ -287,15 +298,11 @@ void Ball::hitBall() {
         deg -= 90;
     }
     angle = glm::radians(deg);
-    std::cerr << "dot: " << dot << "\n";
-    std::cerr << "radian: " << angle << "\n";
-    std::cerr << "angle: " << deg << "\n";
 
     // Rotate ball's velocity vector about closestPoint, following law of reflectance
     glm::mat3 rotation = generateRotationMatrix(-2 * angle);
     glm::vec3 cp = racquet->closestPoint;
     glm::vec3 newVelR = rotation * (-ballVelR);
-    std::cerr << "newVelR: (" << newVelR.x << ", " << newVelR.y << ")\n";
 
     // Transform ball's new velocity back to world frame of reference
     glm::vec3 newVel = newVelR + racquet->m_vel;
@@ -303,8 +310,26 @@ void Ball::hitBall() {
     m_vel = newVel;
 
     m_hitVelocity = glm::vec2(m_vel.x, m_vel.y);
+}
 
-    std::cerr << "new velocity: (" << m_vel.x << ", " << m_vel.y << ")\n";
+void Ball::computeForces() {
+
+    // compute gravity
+    f_gravity = glm::vec3(0, -GRAVITY * m_mass, 0);
+
+    // compute drag
+    float c_d = 0.55;
+    float radius = m_radius * 0.03;
+    float drag = 0.5 * c_d * PI * radius * radius * RHO * glm::length2(m_vel);
+    f_drag = -drag * glm::normalize(m_vel);
+
+    // compute lift/magnus force
+    float c_l = 0.25;
+    glm::vec3 rotation = glm::vec3(0, 0, 1);
+    float lift = 0.5 * c_l * PI * radius * radius * RHO * (glm::radians(m_angVel)) * glm::length2(m_vel);
+    f_lift = lift * glm::cross(glm::normalize(f_drag), rotation);
+
+    f_total = f_gravity + f_drag + f_lift;
 }
 
 

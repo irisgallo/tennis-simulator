@@ -9,11 +9,9 @@ void DebugVector::create() {
 
     this->setMode(GL_LINES);
 
-    //m_pt1 *= 0.25;
-    //m_pt2 *= 0.25;
     std::vector<glm::vec3> vertPos {m_pt1, m_pt2};
     std::vector<glm::vec3> vertColor {glm::vec3(1, 0, 0),
-                                      glm::vec3(0, 0, 1)};
+                                       glm::vec3(0, 0, 1)};
     std::vector<GLuint> vertIdx {0, 1};
 
     m_count = vertIdx.size();

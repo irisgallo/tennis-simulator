@@ -29,6 +29,10 @@ private:
     DebugVertex netDebugPoint;
     DebugVector racquetNormal;
     DebugVertex ballOrientation;
+    DebugVector ballVelocity;
+    DebugVector ballDrag;
+    DebugVector ballLift;
+    DebugVector ballGravity;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 
@@ -46,6 +50,7 @@ public:
     void sendSignals(glm::vec3 pos0, glm::vec3 vel0, float angVel0);
 
 protected:
+    void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
 
