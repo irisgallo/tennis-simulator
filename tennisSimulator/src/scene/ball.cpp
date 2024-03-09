@@ -6,15 +6,18 @@
 #endif
 
 Ball::Ball(OpenGLContext* mp_context)
-    : Ball(mp_context, glm::vec3(), glm::vec3())
+    : Ball(mp_context, glm::vec3(), glm::vec3(), 0.f)
 {}
 
-Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0)
+Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0,
+           glm::vec3 vel0, float angVel0)
     : Polygon2D(mp_context, 20), m_pos(pos0), m_vel(glm::vec3()),
       m_pos0(pos0), m_vel0(vel0),
+      m_deg(0.f), m_angVel(0.f), m_angVel0(angVel0),
       m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
-      m_radius(3.5), m_mass(0.057), isStopped(true), hasCollision(false),
-      netPoint(glm::vec3()), racquet(nullptr), m_hitVelocity(glm::vec3())
+      m_radius(3.5), m_mass(0.057), isStopped(true),
+      hasCollision(false), netPoint(glm::vec3()), racquet(nullptr),
+      m_hitVelocity(glm::vec3())
 {}
 
 void Ball::tick(float dT) {
@@ -26,6 +29,16 @@ void Ball::tick(float dT) {
         }
     }
 
+    float scaledTime = 0.003 * dT;
+
+    // detect net collision
+    if (detectNetCollision()) {
+        m_vel.x *= -1;
+        m_pos += scaledTime * m_vel;
+        hasCollision = false;
+        return;
+    }
+
     if (isStopped) {
         return;
     }
@@ -34,8 +47,6 @@ void Ball::tick(float dT) {
         // avoids huge dT values between ticks
         return;
     }
-
-    float scaledTime = 0.003 * dT;
 
     // compute intersection with tennis court (which lies at y = -81.1)
     // these are placeholders for bounce and and screen boundaries for now
@@ -46,14 +57,6 @@ void Ball::tick(float dT) {
         return;
     }
     if (m_pos.x + m_radius >= 199.0 || m_pos.x - m_radius <= -199.0) {
-        m_vel.x *= -1;
-        m_pos += scaledTime * m_vel;
-        hasCollision = false;
-        return;
-    }
-
-    // detect net collision
-    if (detectNetCollision()) {
         m_vel.x *= -1;
         m_pos += scaledTime * m_vel;
         hasCollision = false;
@@ -124,8 +127,13 @@ glm::mat3 Ball::getNetModelMatrix() {
     return translate * scale * rotate;
 }
 
-glm::mat3 Ball::generateRotationMatrix(float rad)
-{
+glm::vec3 Ball::getOrientation() {
+
+    float rad = glm::radians(m_deg);
+    return glm::vec3(glm::cos(rad), glm::sin(rad), 0.f);
+}
+
+glm::mat3 Ball::generateRotationMatrix(float rad) {
     return glm::mat3({glm::cos(rad), glm::sin(rad), 0.f},
                      {-glm::sin(rad), glm::cos(rad), 0.f},
                      {0.f, 0.f, 1.f});

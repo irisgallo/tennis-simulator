@@ -20,6 +20,9 @@ PhysicsControls::PhysicsControls(QWidget *parent)
             this, SLOT(slot_setVX(double)));
     connect(ui->vySpinBox, SIGNAL(valueChanged(double)),
             this, SLOT(slot_setVY(double)));
+
+    connect(ui->avSpinBox, SIGNAL(valueChanged(double)),
+            this, SLOT(slot_setAV(double)));
 }
 
 void PhysicsControls::slot_setStartStop()
@@ -52,6 +55,11 @@ void PhysicsControls::slot_setVY(double vy)
     emit sig_setVY(vy);
 }
 
+void PhysicsControls::slot_setAV(double av)
+{
+    emit sig_setAV(av);
+}
+
 void PhysicsControls::slot_setPos(double px, double py)
 {
     ui->pxSpinBox->setValue(px);
@@ -62,6 +70,11 @@ void PhysicsControls::slot_setVel(double vx, double vy)
 {
     ui->vxSpinBox->setValue(vx);
     ui->vySpinBox->setValue(vy);
+}
+
+void PhysicsControls::slot_setAngVel(double av)
+{
+    ui->avSpinBox->setValue(av);
 }
 
 void PhysicsControls::slot_setHitVelocity(double hx, double hy)
