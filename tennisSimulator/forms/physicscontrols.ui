@@ -281,10 +281,10 @@
     </rect>
    </property>
    <property name="minimum">
-    <double>-400.000000000000000</double>
+    <double>-50.000000000000000</double>
    </property>
    <property name="maximum">
-    <double>400.000000000000000</double>
+    <double>50.000000000000000</double>
    </property>
   </widget>
   <widget class="QLabel" name="avDegLabel">

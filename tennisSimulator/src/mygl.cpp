@@ -10,7 +10,7 @@ MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
       m_ball(this, glm::vec3(-150.f, 0.f, 0.f),
-             glm::vec3(0.f, 25.f, 0.f), 30.f),
+             glm::vec3(0.f, 25.f, 0.f), 0.f),
       m_racquet(this, glm::vec3(-160.f, -20.f, 0.f)),
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
@@ -18,10 +18,6 @@ MyGL::MyGL(QWidget *parent)
       netDebugPoint(this),
       racquetNormal(this),
       ballOrientation(this),
-      ballVelocity(this),
-      ballDrag(this),
-      ballLift(this),
-      ballGravity(this),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -45,10 +41,6 @@ MyGL::~MyGL()
     netDebugPoint.destroy();
     racquetNormal.destroy();
     ballOrientation.destroy();
-    ballVelocity.destroy();
-    ballDrag.destroy();
-    ballLift.destroy();
-    ballGravity.destroy();
 }
 
 void MyGL::initializeGL()
@@ -82,10 +74,6 @@ void MyGL::initializeGL()
     netDebugPoint.create();
     racquetNormal.create();
     ballOrientation.create();
-    ballVelocity.create();
-    ballDrag.create();
-    ballLift.create();
-    ballGravity.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -135,7 +123,7 @@ void MyGL::paintGL()
     prog_flat.setModelMatrix(m_ball.getNetModelMatrix());
     prog_flat.draw(*this, m_geomNet);
 
-    // debug visuals
+    // debug point visuals
     racquetDebugPoint.m_pos = m_racquet.closestPoint;
     racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
     prog_flat.setModelMatrix(racquetDebugPoint.getModelMatrix());
@@ -153,33 +141,9 @@ void MyGL::paintGL()
     prog_flat.draw(*this, racquetNormal);
 
     ballOrientation.m_pos = m_ball.m_pos + (m_ball.m_radius * m_ball.getOrientation());
-    ballOrientation.setColor(glm::vec3(1.0, 0.41, 0.703));
+    ballOrientation.setColor(glm::vec3(0.3, 0.36, 0.32));
     prog_flat.setModelMatrix(ballOrientation.getModelMatrix());
     prog_flat.draw(*this, ballOrientation);
-
-    // ballVelocity.m_pt1 = glm::vec3(m_ball.m_pos);
-    // ballVelocity.m_pt2 = glm::vec3(m_ball.m_pos + m_ball.m_vel);
-    // ballVelocity.create();
-    // prog_flat.setModelMatrix(ballVelocity.getModelMatrix());
-    // prog_flat.draw(*this, ballVelocity);
-
-    // ballDrag.m_pt1 = m_ball.m_pos;
-    // ballDrag.m_pt2 = m_ball.m_pos + m_ball.f_drag;
-    // ballDrag.create();
-    // prog_flat.setModelMatrix(ballDrag.getModelMatrix());
-    // prog_flat.draw(*this, ballDrag);
-
-    // ballLift.m_pt1 = m_ball.m_pos;
-    // ballLift.m_pt2 = m_ball.m_pos + m_ball.f_lift;
-    // ballLift.create();
-    // prog_flat.setModelMatrix(ballLift.getModelMatrix());
-    // prog_flat.draw(*this, ballLift);
-
-    // ballGravity.m_pt1 = m_ball.m_pos;
-    // ballGravity.m_pt2 = m_ball.m_pos + m_ball.f_gravity;
-    // ballGravity.create();
-    // prog_flat.setModelMatrix(ballGravity.getModelMatrix());
-    // prog_flat.draw(*this, ballGravity);
 
 }
 
@@ -249,16 +213,6 @@ void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0, float angVel0)
 
 // screen space is ([0:900], [0:600])
 // world space is ([-200:200], [-133:133])
-void MyGL::mousePressEvent(QMouseEvent *event)
-{
-    float xAtPress = (event->position().x() - 450.0) * (4.0 / 9.0);
-    float yAtPress = (event->position().y() - 300.0) * (-4.0 / 9.0);
-
-    std::cerr << "x: " << xAtPress << ", y: " << yAtPress << "\n";
-
-    event->accept();
-}
-
 void MyGL::mouseMoveEvent(QMouseEvent *event)
 {
     float xAtMove = (event->position().x() - 450.0) * (4.0 / 9.0);
