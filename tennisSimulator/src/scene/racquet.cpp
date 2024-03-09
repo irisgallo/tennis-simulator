@@ -7,8 +7,8 @@ Racquet::Racquet(OpenGLContext* mp_context)
 Racquet::Racquet(OpenGLContext* mp_context, glm::vec3 pos0)
     : Polygon2D(mp_context, 4), m_pos(pos0), m_vel(glm::vec3()),
       m_width(4.97), m_height(21.3), m_deg(0.0), m_mass(0.3),
-      closestPoint(glm::vec3()), closestNormal(glm::vec3()) {
-
+      closestPoint(glm::vec3()), closestNormal(glm::vec3())
+{
     // Vertex positions
     glm::vec3 p(0.25f, 0.f, 0.5f);
 
@@ -22,7 +22,8 @@ Racquet::Racquet(OpenGLContext* mp_context, glm::vec3 pos0)
     m_vertIdx = { 0, 1, 2, 0, 2, 3 };
 }
 
-glm::mat3 Racquet::getModelMatrix() {
+glm::mat3 Racquet::getModelMatrix()
+{
     // rotate
     float rad = glm::radians(m_deg);
     float cos = glm::cos(rad);
@@ -52,12 +53,12 @@ glm::mat3 Racquet::getModelMatrix() {
     return translate * rotate * scale * rotate2;
 }
 
-void Racquet::rotateCounterclockwise() {
-
+void Racquet::rotateCounterclockwise()
+{
     m_deg += 5.f;
 }
 
-void Racquet::rotateClockwise() {
-
+void Racquet::rotateClockwise()
+{
     m_deg -= 5.f;
 }

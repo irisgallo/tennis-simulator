@@ -25,10 +25,9 @@ private:
     Polygon2D m_geomNet;
 
     // debugging
-    DebugVertex racquetDebugPoint;
-    DebugVertex netDebugPoint;
-    DebugVector racquetNormal;
-    DebugVertex ballOrientation;
+    DebugVertex m_racquetDebugPoint;
+    DebugVertex m_netDebugPoint;
+    DebugVector m_racquetNormal;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 
@@ -43,7 +42,7 @@ public:
     void resizeGL(int w, int h);
     void paintGL();
 
-    void sendSignals(glm::vec3 pos0, glm::vec3 vel0, float angVel0);
+    void sendSignals(glm::vec3 pos0, glm::vec3 vel0);
 
 protected:
     void mouseMoveEvent(QMouseEvent *event);
@@ -59,12 +58,10 @@ public slots:
     void slot_setPY(double py);
     void slot_setVX(double vx);
     void slot_setVY(double vy);
-    void slot_setAV(double av);
 
 signals:
     void sig_sendPos(double, double);
     void sig_sendVel(double, double);
-    void sig_sendAngVel(double);
     void sig_sendHitVelocity(double, double);
 };
 

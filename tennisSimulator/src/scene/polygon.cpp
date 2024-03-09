@@ -6,8 +6,8 @@ Polygon2D::Polygon2D(OpenGLContext* context)
 {}
 
 Polygon2D::Polygon2D(OpenGLContext* context, int numSides)
-    : Drawable(context), m_vertPos(), m_vertIdx(), m_numVertices(numSides) {
-
+    : Drawable(context), m_vertPos(), m_vertIdx(), m_numVertices(numSides)
+{
     // Vertex positions
     glm::vec3 p(0.25f, 0.f, 0.5f);
     float deg = glm::radians(360.f / numSides);
@@ -27,9 +27,8 @@ Polygon2D::Polygon2D(OpenGLContext* context, int numSides)
 }
 
 Polygon2D::Polygon2D(OpenGLContext* context, const std::vector<glm::vec3>& positions)
-    : Drawable(context), m_vertPos(positions), m_vertIdx(),
-      m_numVertices(positions.size()) {
-
+    : Drawable(context), m_vertPos(positions), m_vertIdx(), m_numVertices(positions.size())
+{
     int n = m_numVertices - 2;
     for (int i = 0; i < n; i++)
     {
@@ -39,8 +38,8 @@ Polygon2D::Polygon2D(OpenGLContext* context, const std::vector<glm::vec3>& posit
     }
 }
 
-void Polygon2D::create() {
-
+void Polygon2D::create()
+{
     this->setMode(GL_TRIANGLES);
 
     // Track our index count in a member variable
@@ -66,8 +65,8 @@ void Polygon2D::create() {
     m_vertPos.clear();
 }
 
-void Polygon2D::setColor(glm::vec3 c) {
-
+void Polygon2D::setColor(glm::vec3 c)
+{
     if (!bindCol())
     {
         generateCol();

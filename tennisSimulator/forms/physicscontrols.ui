@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>194</width>
-    <height>396</height>
+    <height>325</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -185,7 +185,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>330</y>
+     <y>260</y>
      <width>62</width>
      <height>22</height>
     </rect>
@@ -204,7 +204,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>310</y>
+     <y>240</y>
      <width>81</width>
      <height>16</height>
     </rect>
@@ -217,7 +217,7 @@
    <property name="geometry">
     <rect>
      <x>120</x>
-     <y>350</y>
+     <y>280</y>
      <width>16</width>
      <height>16</height>
     </rect>
@@ -230,7 +230,7 @@
    <property name="geometry">
     <rect>
      <x>100</x>
-     <y>330</y>
+     <y>260</y>
      <width>62</width>
      <height>22</height>
     </rect>
@@ -249,55 +249,13 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>350</y>
+     <y>280</y>
      <width>16</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
     <string>X</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="avLabel">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>240</y>
-     <width>141</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Initial Angular Velocity</string>
-   </property>
-  </widget>
-  <widget class="QDoubleSpinBox" name="avSpinBox">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>260</y>
-     <width>62</width>
-     <height>22</height>
-    </rect>
-   </property>
-   <property name="minimum">
-    <double>-50.000000000000000</double>
-   </property>
-   <property name="maximum">
-    <double>50.000000000000000</double>
-   </property>
-  </widget>
-  <widget class="QLabel" name="avDegLabel">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>280</y>
-     <width>41</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>deg/s</string>
    </property>
   </widget>
  </widget>

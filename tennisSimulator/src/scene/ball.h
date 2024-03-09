@@ -14,12 +14,6 @@ protected:
     glm::vec3 m_pos0;
     glm::vec3 m_vel0;
 
-    float m_deg; // always starts at zero degrees
-    float m_angVel; // probably need to use quaternions later
-                    // for now, we're assuming rotation about z-axis
-    float m_angVel0;
-
-
     glm::vec3 m_gravity;
     float m_radius;
     float m_mass;
@@ -43,8 +37,7 @@ private:
 
 public:
     Ball(OpenGLContext* mp_context);
-    Ball(OpenGLContext* mp_context, glm::vec3 pos0,
-         glm::vec3 vel0, float angVel0);
+    Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0);
 
     // To be called by MyGL::tick()
     void tick(float dT);
@@ -55,7 +48,6 @@ public:
     glm::mat3 getBallModelMatrix();
     glm::mat3 getCourtModelMatrix();
     glm::mat3 getNetModelMatrix();
-    glm::vec3 getOrientation();
 
 signals:
     void sig_sendHitVelocity(double, double);

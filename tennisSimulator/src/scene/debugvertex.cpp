@@ -2,8 +2,8 @@
 
 DebugVertex::DebugVertex(OpenGLContext *mp_context)
     : Drawable(mp_context), m_pos(glm::vec3()),
-    m_vertPos(), m_vertIdx(), m_numVertices(10) {
-
+    m_vertPos(), m_vertIdx(), m_numVertices(10)
+{
     // Vertex positions
     glm::vec3 p(0.25f, 0.f, 0.5f);
 
@@ -23,8 +23,8 @@ DebugVertex::DebugVertex(OpenGLContext *mp_context)
     }
 }
 
-void DebugVertex::create() {
-
+void DebugVertex::create()
+{
     this->setMode(GL_TRIANGLES);
 
     m_count = m_vertIdx.size();
@@ -42,8 +42,8 @@ void DebugVertex::create() {
     m_vertPos.clear();
 }
 
-void DebugVertex::setColor(glm::vec3 c) {
-
+void DebugVertex::setColor(glm::vec3 c)
+{
     if (!bindCol())
     {
         generateCol();
@@ -54,8 +54,8 @@ void DebugVertex::setColor(glm::vec3 c) {
     mp_context->glBufferData(GL_ARRAY_BUFFER, m_numVertices * sizeof(glm::vec3), colors.data(), GL_STATIC_DRAW);
 }
 
-glm::mat3 DebugVertex::getModelMatrix() {
-
+glm::mat3 DebugVertex::getModelMatrix()
+{
     glm::mat3 mat = glm::mat3({{0.2, 0, 0},
                                {0, 0.2, 0},
                                {0.1 * m_pos.x, 0.1 * m_pos.y, 1}});

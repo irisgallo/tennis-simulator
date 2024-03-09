@@ -9,15 +9,14 @@
 MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
-      m_ball(this, glm::vec3(-150.f, 0.f, 0.f),
-             glm::vec3(0.f, 25.f, 0.f), 0.f),
+      m_ball(this, glm::vec3(-150.f, 50.f, 0.f),
+               glm::vec3(0.f, 25.f, 0.f)),
       m_racquet(this, glm::vec3(-160.f, -20.f, 0.f)),
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
-      racquetDebugPoint(this),
-      netDebugPoint(this),
-      racquetNormal(this),
-      ballOrientation(this),
+      m_racquetDebugPoint(this),
+      m_netDebugPoint(this),
+      m_racquetNormal(this),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -37,10 +36,9 @@ MyGL::~MyGL()
     m_racquet.destroy();
     m_geomCourt.destroy();
     m_geomNet.destroy();
-    racquetDebugPoint.destroy();
-    netDebugPoint.destroy();
-    racquetNormal.destroy();
-    ballOrientation.destroy();
+    m_racquetDebugPoint.destroy();
+    m_netDebugPoint.destroy();
+    m_racquetNormal.destroy();
 }
 
 void MyGL::initializeGL()
@@ -69,11 +67,9 @@ void MyGL::initializeGL()
     m_racquet.create();
     m_geomCourt.create();
     m_geomNet.create();
-
-    racquetDebugPoint.create();
-    netDebugPoint.create();
-    racquetNormal.create();
-    ballOrientation.create();
+    m_racquetDebugPoint.create();
+    m_netDebugPoint.create();
+    m_racquetNormal.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -82,11 +78,10 @@ void MyGL::initializeGL()
     glBindVertexArray(vao);
 
     m_ball.racquet = &m_racquet;
-    racquetDebugPoint.m_pos = m_racquet.m_pos;
-    netDebugPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
-    ballOrientation.m_pos = m_ball.m_pos + (m_ball.m_radius * m_ball.getOrientation());
+    m_racquetDebugPoint.m_pos = m_racquet.m_pos;
+    m_netDebugPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
 
-    sendSignals(m_ball.m_pos0, m_ball.m_vel0, m_ball.m_angVel0);
+    sendSignals(m_ball.m_pos0, m_ball.m_vel0);
 }
 
 void MyGL::resizeGL(int w, int h)
@@ -124,26 +119,22 @@ void MyGL::paintGL()
     prog_flat.draw(*this, m_geomNet);
 
     // debug point visuals
-    racquetDebugPoint.m_pos = m_racquet.closestPoint;
-    racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
-    prog_flat.setModelMatrix(racquetDebugPoint.getModelMatrix());
-    prog_flat.draw(*this, racquetDebugPoint);
+    m_racquetDebugPoint.m_pos = m_racquet.closestPoint;
+    m_racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
+    prog_flat.setModelMatrix(m_racquetDebugPoint.getModelMatrix());
+    prog_flat.draw(*this, m_racquetDebugPoint);
 
-    netDebugPoint.m_pos = m_ball.netPoint;
-    netDebugPoint.setColor(glm::vec3(0, 1, 0));
-    prog_flat.setModelMatrix(netDebugPoint.getModelMatrix());
-    prog_flat.draw(*this, netDebugPoint);
+    m_netDebugPoint.m_pos = m_ball.netPoint;
+    m_netDebugPoint.setColor(glm::vec3(0, 1, 0));
+    prog_flat.setModelMatrix(m_netDebugPoint.getModelMatrix());
+    prog_flat.draw(*this, m_netDebugPoint);
 
-    racquetNormal.m_pt1 = glm::vec3(m_racquet.closestPoint);
-    racquetNormal.m_pt2 = (2.f * m_racquet.closestNormal) + m_racquet.closestPoint;
-    racquetNormal.create();
-    prog_flat.setModelMatrix(racquetNormal.getModelMatrix());
-    prog_flat.draw(*this, racquetNormal);
-
-    ballOrientation.m_pos = m_ball.m_pos + (m_ball.m_radius * m_ball.getOrientation());
-    ballOrientation.setColor(glm::vec3(0.3, 0.36, 0.32));
-    prog_flat.setModelMatrix(ballOrientation.getModelMatrix());
-    prog_flat.draw(*this, ballOrientation);
+    m_racquetNormal.m_pt1 = glm::vec3(m_racquet.closestPoint);
+    m_racquetNormal.m_pt2 = (2.f * m_racquet.closestNormal) + m_racquet.closestPoint;
+    //m_normalDebugVector.m_pt2 = glm::vec3(0, 0, 0);
+    m_racquetNormal.create();
+    prog_flat.setModelMatrix(m_racquetNormal.getModelMatrix());
+    prog_flat.draw(*this, m_racquetNormal);
 
 }
 
@@ -198,17 +189,10 @@ void MyGL::slot_setVY(double vy)
     m_ball.reset();
 }
 
-void MyGL::slot_setAV(double av)
-{
-    m_ball.m_angVel0 = av;
-    m_ball.reset();
-}
-
-void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0, float angVel0)
+void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0)
 {
     emit sig_sendPos(pos0[0], pos0[1]);
     emit sig_sendVel(vel0[0], vel0[1]);
-    emit sig_sendAngVel(angVel0);
 }
 
 // screen space is ([0:900], [0:600])
