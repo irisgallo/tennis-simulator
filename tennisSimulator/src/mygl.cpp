@@ -16,7 +16,7 @@ MyGL::MyGL(QWidget *parent)
       m_geomNet(this, 4),
       m_racquetDebugPoint(this),
       m_netDebugPoint(this),
-      m_racquetNormal(this),
+      m_normalDebugPoint(this),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -38,7 +38,7 @@ MyGL::~MyGL()
     m_geomNet.destroy();
     m_racquetDebugPoint.destroy();
     m_netDebugPoint.destroy();
-    m_racquetNormal.destroy();
+    m_normalDebugPoint.destroy();
 }
 
 void MyGL::initializeGL()
@@ -69,7 +69,7 @@ void MyGL::initializeGL()
     m_geomNet.create();
     m_racquetDebugPoint.create();
     m_netDebugPoint.create();
-    m_racquetNormal.create();
+    m_normalDebugPoint.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -80,6 +80,7 @@ void MyGL::initializeGL()
     m_ball.racquet = &m_racquet;
     m_racquetDebugPoint.m_pos = m_racquet.m_pos;
     m_netDebugPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
+    m_normalDebugPoint.m_pos = m_racquet.m_pos;
 
     sendSignals(m_ball.m_pos0, m_ball.m_vel0);
 }
@@ -110,14 +111,6 @@ void MyGL::paintGL()
     prog_flat.setModelMatrix(m_racquet.getModelMatrix());
     prog_flat.draw(*this, m_racquet);
 
-    // tennis court/net
-    m_geomCourt.setColor(glm::vec3(0.8, 0.8, 0.8));
-    prog_flat.setModelMatrix(m_ball.getCourtModelMatrix());
-    prog_flat.draw(*this, m_geomCourt);
-    m_geomNet.setColor(glm::vec3(0.8, 0.8, 0.8));
-    prog_flat.setModelMatrix(m_ball.getNetModelMatrix());
-    prog_flat.draw(*this, m_geomNet);
-
     // debug point visuals
     m_racquetDebugPoint.m_pos = m_racquet.closestPoint;
     m_racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
@@ -129,13 +122,21 @@ void MyGL::paintGL()
     prog_flat.setModelMatrix(m_netDebugPoint.getModelMatrix());
     prog_flat.draw(*this, m_netDebugPoint);
 
-    m_racquetNormal.m_pt1 = glm::vec3(m_racquet.closestPoint);
-    m_racquetNormal.m_pt2 = (2.f * m_racquet.closestNormal) + m_racquet.closestPoint;
-    //m_normalDebugVector.m_pt2 = glm::vec3(0, 0, 0);
-    m_racquetNormal.create();
-    prog_flat.setModelMatrix(m_racquetNormal.getModelMatrix());
-    prog_flat.draw(*this, m_racquetNormal);
+    m_normalDebugPoint.m_pos = m_racquet.closestNormal;
+    m_normalDebugPoint.m_pos *= 10;
+    m_normalDebugPoint.m_pos += m_racquet.closestPoint;
+    m_normalDebugPoint.setColor(glm::vec3(0, 0, 1));
+    prog_flat.setModelMatrix(m_normalDebugPoint.getModelMatrix());
+    prog_flat.draw(*this, m_normalDebugPoint);
 
+
+    // tennis court/net
+    m_geomCourt.setColor(glm::vec3(0.8, 0.8, 0.8));
+    prog_flat.setModelMatrix(m_ball.getCourtModelMatrix());
+    prog_flat.draw(*this, m_geomCourt);
+    m_geomNet.setColor(glm::vec3(0.8, 0.8, 0.8));
+    prog_flat.setModelMatrix(m_ball.getNetModelMatrix());
+    prog_flat.draw(*this, m_geomNet);
 }
 
 // MyGL's constructor links tick() to a timer that fires 60 times per second.

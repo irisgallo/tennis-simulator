@@ -23,8 +23,6 @@ protected:
         // we need to pass our OpenGL context to the Drawable in order to call GL functions
         // from within this class.
 
-    GLenum mode;
-
 
 public:
     Drawable(OpenGLContext* context);
@@ -35,7 +33,6 @@ public:
 
     // Getter functions for various GL data
     virtual GLenum drawMode();
-    virtual void setMode(GLenum);
     int elemCount();
 
     // Call these functions when you want to call glGenBuffers on the buffers stored in the Drawable
