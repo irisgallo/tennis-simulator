@@ -9,8 +9,8 @@
 MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
-      m_ball(this, glm::vec3(-150.f, 50.f, 0.f),
-               glm::vec3(0.f, 25.f, 0.f), 30.f),
+      m_ball(this, glm::vec3(-150.f, 0.f, 0.f),
+               glm::vec3(40.f, 10.f, 0.f), 30.f),
       m_racquet(this, glm::vec3(-160.f, -20.f, 0.f)),
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
@@ -18,6 +18,9 @@ MyGL::MyGL(QWidget *parent)
       netClosestPoint(this),
       racquetNormal(this),
       ballOrientation(this),
+      gravityForce(this),
+      dragForce(this),
+      liftForce(this),
       prevMSecs(0)
 {
 
@@ -43,6 +46,10 @@ MyGL::~MyGL() {
     netClosestPoint.destroy();
     racquetNormal.destroy();
     ballOrientation.destroy();
+
+    gravityForce.destroy();
+    dragForce.destroy();
+    liftForce.destroy();
 }
 
 
@@ -77,6 +84,10 @@ void MyGL::initializeGL() {
     netClosestPoint.create();
     racquetNormal.create();
     ballOrientation.create();
+
+    gravityForce.create();
+    dragForce.create();
+    liftForce.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -151,6 +162,21 @@ void MyGL::paintGL() {
     ballOrientation.setColor(glm::vec3(1, 0.45, 0.91));
     prog_flat.setModelMatrix(ballOrientation.getModelMatrix());
     prog_flat.draw(*this, ballOrientation);
+
+    gravityForce.m_pos = m_ball.m_pos + m_ball.f_gravity;
+    gravityForce.setColor(glm::vec3(0, 1, 0));
+    prog_flat.setModelMatrix(gravityForce.getModelMatrix());
+    prog_flat.draw(*this, gravityForce);
+
+    dragForce.m_pos = m_ball.m_pos + m_ball.f_drag;
+    dragForce.setColor(glm::vec3());
+    prog_flat.setModelMatrix(dragForce.getModelMatrix());
+    prog_flat.draw(*this, dragForce);
+
+    liftForce.m_pos = m_ball.m_pos + m_ball.f_lift;
+    liftForce.setColor(glm::vec3(0, 0, 1));
+    prog_flat.setModelMatrix(liftForce.getModelMatrix());
+    prog_flat.draw(*this, liftForce);
 }
 
 

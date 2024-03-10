@@ -29,6 +29,10 @@ private:
     DebugVertex racquetNormal;
     DebugVertex ballOrientation;
 
+    DebugVertex gravityForce;
+    DebugVertex dragForce;
+    DebugVertex liftForce;
+
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 
     QTimer m_timer; // Timer linked to tick(). Fires approximately 60 times per second.

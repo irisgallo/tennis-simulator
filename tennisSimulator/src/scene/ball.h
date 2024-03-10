@@ -18,10 +18,13 @@ protected:
     float m_angVel; // for now, assuming rotation about z-axis
     float m_angVel0;
 
-
-    glm::vec3 m_gravity;
     float m_radius;
     float m_mass;
+
+    glm::vec3 f_gravity;
+    glm::vec3 f_drag;
+    glm::vec3 f_lift;
+    glm::vec3 f_total;
 
     bool isStopped;
     bool hasCollision;
@@ -37,6 +40,7 @@ private:
     bool detectNetCollision();
 
     void hitBall();
+    void computeForces();
 
     glm::mat3 generateRotationMatrix(float rad);
 

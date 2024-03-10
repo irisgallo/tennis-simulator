@@ -5,6 +5,15 @@
 #define GRAVITY 9.8f
 #endif
 
+#ifndef PI
+#define PI 3.14159265f
+#endif
+
+// density of air
+#ifndef RHO
+#define RHO 1.293
+#endif
+
 Ball::Ball(OpenGLContext* mp_context)
     : Ball(mp_context, glm::vec3(), glm::vec3(), 0.f)
 {}
@@ -14,9 +23,10 @@ Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0,
            glm::vec3 vel0, float angVel0)
     : Polygon2D(mp_context, 20), m_pos(pos0), m_vel(glm::vec3()),
       m_pos0(pos0), m_vel0(vel0), m_deg(0.f), m_angVel(angVel0),
-      m_angVel0(angVel0), m_gravity(glm::vec3(0.0, -GRAVITY, 0.0)),
-      m_radius(3.5), m_mass(0.057), isStopped(true), hasCollision(false),
-      netPoint(glm::vec3()), racquet(nullptr), m_hitVelocity(glm::vec3())
+      m_angVel0(angVel0), m_radius(3.5), m_mass(0.057), f_gravity(),
+      f_drag(), f_lift(), f_total(), isStopped(true),
+      hasCollision(false), netPoint(glm::vec3()), racquet(nullptr),
+      m_hitVelocity(glm::vec3())
 {}
 
 
@@ -61,8 +71,10 @@ void Ball::tick(float dT) {
         return;
     }
 
+    computeForces();
+
     m_pos += scaledTime * m_vel;
-    m_vel += scaledTime * m_gravity;
+    m_vel += scaledTime * (f_total / (m_mass * 100) );
     m_deg += scaledTime * m_angVel;
     if (m_deg >= 360.0) {
         m_deg -= 360.0;
@@ -313,4 +325,22 @@ void Ball::hitBall() {
 }
 
 
+void Ball::computeForces() {
 
+    // compute gravity
+    f_gravity = glm::vec3(0, -GRAVITY * (m_mass * 100), 0);
+
+    // compute drag
+    float c_d = 0.55;
+    float radius = m_radius * 0.03;
+    float drag = 0.5 * c_d * PI * radius * radius * RHO * glm::length2(m_vel);
+    f_drag = -drag * glm::normalize(m_vel);
+
+    // compute lift/magnus force
+    float c_l = 0.25;
+    glm::vec3 rotation = glm::vec3(0, 0, 1);
+    float lift = 0.5 * c_l * PI * radius * radius * RHO * (glm::radians(m_angVel)) * glm::length2(m_vel);
+    f_lift = lift * glm::cross(glm::normalize(f_drag), rotation);
+
+    f_total = f_gravity + f_drag + f_lift;
+}
