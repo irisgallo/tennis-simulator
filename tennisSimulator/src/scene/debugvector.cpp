@@ -42,6 +42,6 @@ glm::mat3 DebugVector::getModelMatrix() {
     glm::vec3 pos = m_pt2 - m_pt1;
     glm::mat3 mat = glm::mat3({{0.05, 0, 0},
                                {0, 0.05, 0},
-                               {0.25 * pos.x, 0.25 * pos.y, 1}});
+                               {0.05 * pos.x, 0.05 * pos.y, 1}});
     return mat;
 }

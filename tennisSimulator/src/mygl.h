@@ -24,16 +24,20 @@ private:
     Polygon2D m_geomCourt;
     Polygon2D m_geomNet;
 
-    // debugging
+    // debugging visuals
     DebugVertex racquetClosestPoint;
     DebugVertex netClosestPoint;
     DebugVertex ballOrientation;
+    DebugVertex racquetNormalPoint;
 
     DebugVertex gravityForce;
     DebugVertex dragForce;
     DebugVertex liftForce;
 
     DebugVector racquetNormal;
+    DebugVector gravityForceVector;
+    DebugVector dragForceVector;
+    DebugVector liftForceVector;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 
