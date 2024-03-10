@@ -16,11 +16,11 @@ MyGL::MyGL(QWidget *parent)
       m_geomNet(this, 4),
       racquetClosestPoint(this),
       netClosestPoint(this),
-      racquetNormal(this),
       ballOrientation(this),
       gravityForce(this),
       dragForce(this),
       liftForce(this),
+      racquetNormal(this),
       prevMSecs(0)
 {
 
@@ -44,12 +44,13 @@ MyGL::~MyGL() {
 
     racquetClosestPoint.destroy();
     netClosestPoint.destroy();
-    racquetNormal.destroy();
     ballOrientation.destroy();
 
     gravityForce.destroy();
     dragForce.destroy();
     liftForce.destroy();
+
+    racquetNormal.destroy();
 }
 
 
@@ -82,12 +83,13 @@ void MyGL::initializeGL() {
 
     racquetClosestPoint.create();
     netClosestPoint.create();
-    racquetNormal.create();
     ballOrientation.create();
 
     gravityForce.create();
     dragForce.create();
     liftForce.create();
+
+    racquetNormal.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -98,7 +100,6 @@ void MyGL::initializeGL() {
     m_ball.racquet = &m_racquet;
     racquetClosestPoint.m_pos = m_racquet.m_pos;
     netClosestPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
-    racquetNormal.m_pos = m_racquet.m_pos;
     ballOrientation.m_pos = m_ball.m_pos + (m_ball.m_radius * m_ball.getOrientation());
 
     sendSignals(m_ball.m_pos0, m_ball.m_vel0, m_ball.m_angVel0);
@@ -151,13 +152,6 @@ void MyGL::paintGL() {
     prog_flat.setModelMatrix(netClosestPoint.getModelMatrix());
     prog_flat.draw(*this, netClosestPoint);
 
-    racquetNormal.m_pos = m_racquet.closestNormal;
-    racquetNormal.m_pos *= 10;
-    racquetNormal.m_pos += m_racquet.closestPoint;
-    racquetNormal.setColor(glm::vec3(1, 0, 0));
-    prog_flat.setModelMatrix(racquetNormal.getModelMatrix());
-    prog_flat.draw(*this, racquetNormal);
-
     ballOrientation.m_pos = m_ball.m_pos + (m_ball.m_radius * m_ball.getOrientation());
     ballOrientation.setColor(glm::vec3(1, 0.45, 0.91));
     prog_flat.setModelMatrix(ballOrientation.getModelMatrix());
@@ -177,6 +171,15 @@ void MyGL::paintGL() {
     liftForce.setColor(glm::vec3(0, 0, 1));
     prog_flat.setModelMatrix(liftForce.getModelMatrix());
     prog_flat.draw(*this, liftForce);
+
+    // debug vectors
+    racquetNormal.m_pt1 = m_racquet.closestPoint;
+    racquetNormal.m_pt2 = m_racquet.closestPoint + (2.f * m_racquet.closestNormal);
+    racquetNormal.create();
+    racquetNormal.setColor(glm::vec3(1, 0, 0));
+    prog_flat.setModelMatrix(racquetNormal.getModelMatrix());
+    prog_flat.draw(*this, racquetNormal);
+
 }
 
 

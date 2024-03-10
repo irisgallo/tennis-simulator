@@ -25,8 +25,12 @@ GLenum Drawable::drawMode() {
     // Since we want every three indices in bufIdx to be
     // read to draw our Drawable, we tell that the draw mode
     // of this Drawable is GL_TRIANGLES
+    return mode;
+}
 
-    return GL_TRIANGLES;
+void Drawable::setMode(GLenum m)
+{
+    mode = m;
 }
 
 
