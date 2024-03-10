@@ -24,9 +24,9 @@ private:
     Polygon2D m_geomNet;
 
     // debugging
-    DebugVertex m_racquetDebugPoint;
-    DebugVertex m_netDebugPoint;
-    DebugVertex m_normalDebugPoint;
+    DebugVertex racquetClosestPoint;
+    DebugVertex netClosestPoint;
+    DebugVertex racquetNormal;
 
     GLuint vao; // A handle for our vertex array object. This will store the VBOs created in our geometry classes.
 

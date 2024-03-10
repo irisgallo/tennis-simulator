@@ -14,9 +14,9 @@ MyGL::MyGL(QWidget *parent)
       m_racquet(this, glm::vec3(-160.f, -20.f, 0.f)),
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
-      m_racquetDebugPoint(this),
-      m_netDebugPoint(this),
-      m_normalDebugPoint(this),
+      racquetClosestPoint(this),
+      netClosestPoint(this),
+      racquetNormal(this),
       prevMSecs(0)
 {
     // Connect the timer to a function so that when the timer ticks the function is executed
@@ -36,9 +36,10 @@ MyGL::~MyGL()
     m_racquet.destroy();
     m_geomCourt.destroy();
     m_geomNet.destroy();
-    m_racquetDebugPoint.destroy();
-    m_netDebugPoint.destroy();
-    m_normalDebugPoint.destroy();
+
+    racquetClosestPoint.destroy();
+    netClosestPoint.destroy();
+    racquetNormal.destroy();
 }
 
 void MyGL::initializeGL()
@@ -67,9 +68,10 @@ void MyGL::initializeGL()
     m_racquet.create();
     m_geomCourt.create();
     m_geomNet.create();
-    m_racquetDebugPoint.create();
-    m_netDebugPoint.create();
-    m_normalDebugPoint.create();
+
+    racquetClosestPoint.create();
+    netClosestPoint.create();
+    racquetNormal.create();
 
     prog_flat.create(":/glsl/flat.vert.glsl", ":/glsl/flat.frag.glsl");
 
@@ -78,9 +80,9 @@ void MyGL::initializeGL()
     glBindVertexArray(vao);
 
     m_ball.racquet = &m_racquet;
-    m_racquetDebugPoint.m_pos = m_racquet.m_pos;
-    m_netDebugPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
-    m_normalDebugPoint.m_pos = m_racquet.m_pos;
+    racquetClosestPoint.m_pos = m_racquet.m_pos;
+    netClosestPoint.m_pos = glm::vec3(0.f, -68.f, 0.f);
+    racquetNormal.m_pos = m_racquet.m_pos;
 
     sendSignals(m_ball.m_pos0, m_ball.m_vel0);
 }
@@ -112,22 +114,22 @@ void MyGL::paintGL()
     prog_flat.draw(*this, m_racquet);
 
     // debug point visuals
-    m_racquetDebugPoint.m_pos = m_racquet.closestPoint;
-    m_racquetDebugPoint.setColor(glm::vec3(1, 0, 0));
-    prog_flat.setModelMatrix(m_racquetDebugPoint.getModelMatrix());
-    prog_flat.draw(*this, m_racquetDebugPoint);
+    racquetClosestPoint.m_pos = m_racquet.closestPoint;
+    racquetClosestPoint.setColor(glm::vec3(1, 0, 0));
+    prog_flat.setModelMatrix(racquetClosestPoint.getModelMatrix());
+    prog_flat.draw(*this, racquetClosestPoint);
 
-    m_netDebugPoint.m_pos = m_ball.netPoint;
-    m_netDebugPoint.setColor(glm::vec3(0, 1, 0));
-    prog_flat.setModelMatrix(m_netDebugPoint.getModelMatrix());
-    prog_flat.draw(*this, m_netDebugPoint);
+    netClosestPoint.m_pos = m_ball.netPoint;
+    netClosestPoint.setColor(glm::vec3(0, 1, 0));
+    prog_flat.setModelMatrix(netClosestPoint.getModelMatrix());
+    prog_flat.draw(*this, netClosestPoint);
 
-    m_normalDebugPoint.m_pos = m_racquet.closestNormal;
-    m_normalDebugPoint.m_pos *= 10;
-    m_normalDebugPoint.m_pos += m_racquet.closestPoint;
-    m_normalDebugPoint.setColor(glm::vec3(0, 0, 1));
-    prog_flat.setModelMatrix(m_normalDebugPoint.getModelMatrix());
-    prog_flat.draw(*this, m_normalDebugPoint);
+    racquetNormal.m_pos = m_racquet.closestNormal;
+    racquetNormal.m_pos *= 10;
+    racquetNormal.m_pos += m_racquet.closestPoint;
+    racquetNormal.setColor(glm::vec3(0, 0, 1));
+    prog_flat.setModelMatrix(racquetNormal.getModelMatrix());
+    prog_flat.draw(*this, racquetNormal);
 
 
     // tennis court/net

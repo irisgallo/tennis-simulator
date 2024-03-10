@@ -19,11 +19,9 @@ Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0, glm::vec3 vel0)
 
 void Ball::tick(float dT) {
 
-    if (!hasCollision) {
-        if (detectRacquetCollision()) {
-            hitBall();
-            hasCollision = true;
-        }
+    if (detectRacquetCollision() && !hasCollision) {
+        hitBall();
+        hasCollision = true;
     }
 
     if (isStopped) {
@@ -69,6 +67,7 @@ void Ball::reset() {
     m_pos = m_pos0;
     m_vel = m_vel0;
     isStopped = true;
+    hasCollision = false;
 }
 
 void Ball::pressedStartStop() {
