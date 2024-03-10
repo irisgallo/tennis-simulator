@@ -6,40 +6,39 @@ Polygon2D::Polygon2D(OpenGLContext* context)
 {}
 
 Polygon2D::Polygon2D(OpenGLContext* context, int numSides)
-    : Drawable(context), m_vertPos(), m_vertIdx(), m_numVertices(numSides)
-{
+    : Drawable(context), m_vertPos(), m_vertIdx(), m_numVertices(numSides) {
+
     // Vertex positions
     glm::vec3 p(0.25f, 0.f, 0.5f);
     float deg = glm::radians(360.f / numSides);
-    for (int i = 0; i < numSides; i++)
-    {
+    for (int i = 0; i < numSides; i++) {
         glm::mat3 M = glm::rotate(glm::mat3(), i * deg);
         m_vertPos.push_back(M * p);
     }
     // Indices for triangulation
     int n = numSides - 2;
-    for (int i = 0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++) {
         m_vertIdx.push_back(0);
         m_vertIdx.push_back(i+1);
         m_vertIdx.push_back(i+2);
     }
 }
+
 
 Polygon2D::Polygon2D(OpenGLContext* context, const std::vector<glm::vec3>& positions)
-    : Drawable(context), m_vertPos(positions), m_vertIdx(), m_numVertices(positions.size())
-{
+    : Drawable(context), m_vertPos(positions), m_vertIdx(), m_numVertices(positions.size()) {
+
     int n = m_numVertices - 2;
-    for (int i = 0; i < n; i++)
-    {
+    for (int i = 0; i < n; i++) {
         m_vertIdx.push_back(0);
         m_vertIdx.push_back(i+1);
         m_vertIdx.push_back(i+2);
     }
 }
 
-void Polygon2D::create()
-{
+
+void Polygon2D::create() {
+
     // Track our index count in a member variable
     // to be read by ShaderProgram::draw().
     m_count = m_vertIdx.size();
@@ -63,10 +62,10 @@ void Polygon2D::create()
     m_vertPos.clear();
 }
 
-void Polygon2D::setColor(glm::vec3 c)
-{
-    if (!bindCol())
-    {
+
+void Polygon2D::setColor(glm::vec3 c) {
+
+    if (!bindCol()) {
         generateCol();
     }
     std::vector<glm::vec3> colors(m_numVertices);
