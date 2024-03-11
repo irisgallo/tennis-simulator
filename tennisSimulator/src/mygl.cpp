@@ -153,70 +153,74 @@ void MyGL::paintGL() {
     prog_flat.setModelMatrix(m_ball.getNetModelMatrix());
     prog_flat.draw(*this, m_geomNet);
 
-    // debug point visuals
-    racquetClosestPoint.m_pos = m_racquet.closestPoint;
-    racquetClosestPoint.setColor(glm::vec3(1, 0, 0));
-    prog_flat.setModelMatrix(racquetClosestPoint.getModelMatrix());
-    prog_flat.draw(*this, racquetClosestPoint);
-
-    netClosestPoint.m_pos = m_ball.netPoint;
-    netClosestPoint.setColor(glm::vec3(0, 1, 0));
-    prog_flat.setModelMatrix(netClosestPoint.getModelMatrix());
-    prog_flat.draw(*this, netClosestPoint);
-
     ballOrientation.m_pos = m_ball.m_pos + (m_ball.m_radius * m_ball.getOrientation());
     ballOrientation.setColor(glm::vec3(1, 0.45, 0.91));
     prog_flat.setModelMatrix(ballOrientation.getModelMatrix());
     prog_flat.draw(*this, ballOrientation);
 
-    racquetNormalPoint.m_pos = m_racquet.closestPoint + (10.f * m_racquet.closestNormal);
-    racquetNormalPoint.setColor(glm::vec3(1, 0, 0));
-    prog_flat.setModelMatrix(racquetNormalPoint.getModelMatrix());
-    prog_flat.draw(*this, racquetNormalPoint);
 
-    gravityForce.m_pos = m_ball.m_pos + m_ball.f_gravity;
-    gravityForce.setColor(glm::vec3(0, 1, 0));
-    prog_flat.setModelMatrix(gravityForce.getModelMatrix());
-    prog_flat.draw(*this, gravityForce);
+    if (currentDebugState) {
 
-    dragForce.m_pos = m_ball.m_pos + m_ball.f_drag;
-    dragForce.setColor(glm::vec3(0, 0, 1));
-    prog_flat.setModelMatrix(dragForce.getModelMatrix());
-    prog_flat.draw(*this, dragForce);
+        // debug point visuals
+        racquetClosestPoint.m_pos = m_racquet.closestPoint;
+        racquetClosestPoint.setColor(glm::vec3(1, 0, 0));
+        prog_flat.setModelMatrix(racquetClosestPoint.getModelMatrix());
+        prog_flat.draw(*this, racquetClosestPoint);
 
-    liftForce.m_pos = m_ball.m_pos + m_ball.f_lift;
-    liftForce.setColor(glm::vec3());
-    prog_flat.setModelMatrix(liftForce.getModelMatrix());
-    prog_flat.draw(*this, liftForce);
+        netClosestPoint.m_pos = m_ball.netPoint;
+        netClosestPoint.setColor(glm::vec3(0, 1, 0));
+        prog_flat.setModelMatrix(netClosestPoint.getModelMatrix());
+        prog_flat.draw(*this, netClosestPoint);
 
-    // debug vectors
-    racquetNormal.m_pt1 = m_racquet.closestPoint;
-    racquetNormal.m_pt2 = m_racquet.closestPoint + (10.f * m_racquet.closestNormal);
-    racquetNormal.create();
-    racquetNormal.setColor(glm::vec3(1, 0, 0));
-    prog_flat.setModelMatrix(racquetNormal.getModelMatrix());
-    prog_flat.draw(*this, racquetNormal);
+        racquetNormalPoint.m_pos = m_racquet.closestPoint + (10.f * m_racquet.closestNormal);
+        racquetNormalPoint.setColor(glm::vec3(1, 0, 0));
+        prog_flat.setModelMatrix(racquetNormalPoint.getModelMatrix());
+        prog_flat.draw(*this, racquetNormalPoint);
 
-    gravityForceVector.m_pt1 = m_ball.m_pos;
-    gravityForceVector.m_pt2 = m_ball.m_pos + m_ball.f_gravity;
-    gravityForceVector.create();
-    gravityForceVector.setColor(glm::vec3(0, 1, 0));
-    prog_flat.setModelMatrix(gravityForceVector.getModelMatrix());
-    prog_flat.draw(*this, gravityForceVector);
+        gravityForce.m_pos = m_ball.m_pos + m_ball.f_gravity;
+        gravityForce.setColor(glm::vec3(0, 1, 0));
+        prog_flat.setModelMatrix(gravityForce.getModelMatrix());
+        prog_flat.draw(*this, gravityForce);
 
-    dragForceVector.m_pt1 = m_ball.m_pos;
-    dragForceVector.m_pt2 = m_ball.m_pos + m_ball.f_drag;
-    dragForceVector.create();
-    dragForceVector.setColor(glm::vec3(0, 0, 1));
-    prog_flat.setModelMatrix(dragForceVector.getModelMatrix());
-    prog_flat.draw(*this, dragForceVector);
+        dragForce.m_pos = m_ball.m_pos + m_ball.f_drag;
+        dragForce.setColor(glm::vec3(0, 0, 1));
+        prog_flat.setModelMatrix(dragForce.getModelMatrix());
+        prog_flat.draw(*this, dragForce);
 
-    liftForceVector.m_pt1 = m_ball.m_pos;
-    liftForceVector.m_pt2 = m_ball.m_pos + m_ball.f_lift;
-    liftForceVector.create();
-    liftForceVector.setColor(glm::vec3());
-    prog_flat.setModelMatrix(liftForceVector.getModelMatrix());
-    prog_flat.draw(*this, liftForceVector);
+        liftForce.m_pos = m_ball.m_pos + m_ball.f_lift;
+        liftForce.setColor(glm::vec3());
+        prog_flat.setModelMatrix(liftForce.getModelMatrix());
+        prog_flat.draw(*this, liftForce);
+
+        // debug vectors
+        racquetNormal.m_pt1 = m_racquet.closestPoint;
+        racquetNormal.m_pt2 = m_racquet.closestPoint + (10.f * m_racquet.closestNormal);
+        racquetNormal.create();
+        racquetNormal.setColor(glm::vec3(1, 0, 0));
+        prog_flat.setModelMatrix(racquetNormal.getModelMatrix());
+        prog_flat.draw(*this, racquetNormal);
+
+        gravityForceVector.m_pt1 = m_ball.m_pos;
+        gravityForceVector.m_pt2 = m_ball.m_pos + m_ball.f_gravity;
+        gravityForceVector.create();
+        gravityForceVector.setColor(glm::vec3(0, 1, 0));
+        prog_flat.setModelMatrix(gravityForceVector.getModelMatrix());
+        prog_flat.draw(*this, gravityForceVector);
+
+        dragForceVector.m_pt1 = m_ball.m_pos;
+        dragForceVector.m_pt2 = m_ball.m_pos + m_ball.f_drag;
+        dragForceVector.create();
+        dragForceVector.setColor(glm::vec3(0, 0, 1));
+        prog_flat.setModelMatrix(dragForceVector.getModelMatrix());
+        prog_flat.draw(*this, dragForceVector);
+
+        liftForceVector.m_pt1 = m_ball.m_pos;
+        liftForceVector.m_pt2 = m_ball.m_pos + m_ball.f_lift;
+        liftForceVector.create();
+        liftForceVector.setColor(glm::vec3());
+        prog_flat.setModelMatrix(liftForceVector.getModelMatrix());
+        prog_flat.draw(*this, liftForceVector);
+    }
 
 }
 
@@ -287,6 +291,16 @@ void MyGL::slot_setAV(double av) {
 }
 
 
+void MyGL::slot_setDebugState(int state) {
+
+    if (state == 0) {
+        currentDebugState = false;
+    } else {
+        currentDebugState = true;
+    }
+}
+
+
 void MyGL::sendSignals(glm::vec3 pos0, glm::vec3 vel0, float angVel0) {
 
     emit sig_sendPos(pos0[0], pos0[1]);
@@ -335,3 +349,4 @@ void MyGL::keyPressEvent(QKeyEvent *event) {
             break;
     }
 }
+

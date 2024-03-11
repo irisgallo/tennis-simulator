@@ -43,6 +43,7 @@ private:
 
     QTimer m_timer; // Timer linked to tick(). Fires approximately 60 times per second.
     qint64 prevMSecs;
+    bool currentDebugState;
 
 public:
     explicit MyGL(QWidget *parent = 0);
@@ -70,6 +71,7 @@ public slots:
     void slot_setVX(double vx);
     void slot_setVY(double vy);
     void slot_setAV(double av);
+    void slot_setDebugState(int state);
 
 signals:
     void sig_sendPos(double, double);

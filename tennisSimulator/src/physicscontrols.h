@@ -25,6 +25,7 @@ public slots:
     void slot_setVX(double vx);
     void slot_setVY(double vy);
     void slot_setAV(double av);
+    void slot_setDebugState(int state);
 
     void slot_setPos(double px, double py);
     void slot_setVel(double vx, double vy);
@@ -40,6 +41,7 @@ signals:
     void sig_setVX(double vx);
     void sig_setVY(double vy);
     void sig_setAV(double av);
+    void sig_setDebugState(int state);
 };
 
 #endif // PHYSICSCONTROLS_H

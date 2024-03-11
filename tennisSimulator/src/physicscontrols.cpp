@@ -22,6 +22,9 @@ PhysicsControls::PhysicsControls(QWidget *parent)
             this, SLOT(slot_setVY(double)));
     connect(ui->avSpinBox, SIGNAL(valueChanged(double)),
             this, SLOT(slot_setAV(double)));
+
+    connect(ui->debugCheckBox, SIGNAL(stateChanged(int)),
+            this, SLOT(slot_setDebugState(int)));
 }
 
 
@@ -58,6 +61,11 @@ void PhysicsControls::slot_setVY(double vy) {
 void PhysicsControls::slot_setAV(double av) {
 
     emit sig_setAV(av);
+}
+
+void PhysicsControls::slot_setDebugState(int state) {
+
+    emit sig_setDebugState(state);
 }
 
 void PhysicsControls::slot_setPos(double px, double py) {

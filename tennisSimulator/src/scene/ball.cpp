@@ -339,7 +339,7 @@ void Ball::computeForces() {
     // compute lift/magnus force
     float c_l = 0.25;
     glm::vec3 rotation = glm::vec3(0, 0, 1);
-    float lift = 0.5 * c_l * PI * radius * radius * RHO * (glm::radians(m_angVel)) * glm::length2(m_vel);
+    float lift = 0.5 * c_l * PI * radius * RHO * (glm::radians(m_angVel)) * glm::length(m_vel);
     f_lift = lift * glm::cross(glm::normalize(f_drag), rotation);
 
     f_total = f_gravity + f_drag + f_lift;

@@ -27,6 +27,8 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->mygl, SLOT(slot_setVY(double)));
     connect(physicsControls, SIGNAL(sig_setAV(double)),
             ui->mygl, SLOT(slot_setAV(double)));
+    connect(physicsControls, SIGNAL(sig_setDebugState(int)),
+            ui->mygl, SLOT(slot_setDebugState(int)));
 
     connect(ui->mygl, SIGNAL(sig_sendPos(double, double)),
             physicsControls, SLOT(slot_setPos(double, double)));
