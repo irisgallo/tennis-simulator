@@ -65,7 +65,13 @@ void Ball::tick(float dT) {
 
     // detect net collision
     if (detectNetCollision()) {
-        m_vel.x *= -1;
+        if (m_pos.x == netPoint.x) {
+            m_vel.y *= -1;
+        }
+        if (m_pos.y == netPoint.y) {
+            m_vel.x *= -1;
+        }
+
         m_pos += scaledTime * m_vel;
         hasCollision = false;
         return;
@@ -255,7 +261,7 @@ bool Ball::detectRacquetCollision() {
 
 bool Ball::detectNetCollision() {
 
-    // find the closest point on the racquet to the ball
+    // find the closest point on the net to the ball
     float width = 7.1;
     float height = 28.4;
     glm::vec3 netPos = glm::vec3(0.f, -68.0, 0.f);
@@ -286,7 +292,7 @@ bool Ball::detectNetCollision() {
                                closestPoint.y - m_pos.y);
 
     float len = glm::length(dist);
-    if (len <= m_radius) {
+    if (len <= m_radius + 0.1) {
         return true;
     }
 

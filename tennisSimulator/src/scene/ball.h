@@ -29,7 +29,6 @@ protected:
     bool isStopped;
     bool hasCollision;
 
-    // for debugging
     glm::vec3 netPoint;
 
     Racquet* racquet;
