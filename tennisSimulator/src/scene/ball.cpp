@@ -32,9 +32,19 @@ Ball::Ball(OpenGLContext* mp_context, glm::vec3 pos0,
 
 void Ball::tick(float dT) {
 
+    float scaledTime = 0.003 * dT;
+
     if (detectRacquetCollision() && !hasCollision) {
         hitBall();
         hasCollision = true;
+        // update ang velocity
+        // Compute torque from racquet on ball
+
+        glm::vec3 racquetForce = racquet->m_mass * racquet->m_accel;
+        glm::vec3 torque = glm::cross(racquetForce, racquet->closestNormal);
+        float momentOfInertia = (2.0/3.0) * m_mass * m_radius * m_radius;
+        glm::vec3 anglVelocity  = torque / (momentOfInertia * scaledTime);
+        m_angVel = anglVelocity[2];
     }
 
     if (isStopped) {
@@ -46,11 +56,9 @@ void Ball::tick(float dT) {
         return;
     }
 
-    float scaledTime = 0.003 * dT;
-
     // compute intersection with tennis court (which lies at y = -81.1)
     // these are placeholders for bounce and and screen boundaries for now
-    if (m_pos.y - m_radius <= -81.1) {
+    if (m_pos.y - m_radius <= -81) {
         m_vel.y *= -1;
         m_pos += scaledTime * m_vel;
         hasCollision = false;
@@ -80,11 +88,14 @@ void Ball::tick(float dT) {
     computeForces();
 
     m_pos += scaledTime * m_vel;
-    m_vel += scaledTime * (f_total / (m_mass * 100) );
+    m_vel += scaledTime * (f_total / (m_mass * 100));
     m_deg += scaledTime * m_angVel;
     if (m_deg >= 360.0) {
         m_deg -= 360.0;
     }
+
+    racquet->m_accel = dT * racquet->m_vel;
+    racquet->m_accel *= 0.08;
 }
 
 
@@ -329,7 +340,6 @@ void Ball::hitBall() {
 
     m_hitVelocity = glm::vec2(m_vel.x, m_vel.y);
 }
-
 
 void Ball::computeForces() {
 

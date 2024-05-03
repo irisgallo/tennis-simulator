@@ -9,9 +9,9 @@
 MyGL::MyGL(QWidget *parent)
     : OpenGLContext(parent),
       prog_flat(this),
-      m_ball(this, glm::vec3(-150.f, 0.f, 0.f),
-               glm::vec3(40.f, 10.f, 0.f), 30.f),
-      m_racquet(this, glm::vec3(-160.f, -20.f, 0.f)),
+      m_ball(this, glm::vec3(-100.f, -50.f, 0.f),
+               glm::vec3(0.f, 20.f, 0.f), 0.f),
+      m_racquet(this, glm::vec3(-120.f, -50.f, 0.f)),
       m_geomCourt(this, 4),
       m_geomNet(this, 4),
       racquetClosestPoint(this),

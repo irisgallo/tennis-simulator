@@ -9,6 +9,7 @@ class Racquet : public Polygon2D
 protected:
     glm::vec3 m_pos;
     glm::vec3 m_vel;
+    glm::vec3 m_accel;
 
     float m_width;
     float m_height;
