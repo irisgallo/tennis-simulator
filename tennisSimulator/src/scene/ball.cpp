@@ -56,12 +56,21 @@ void Ball::tick(float dT) {
         return;
     }
 
-    // compute intersection with tennis court (which lies at y = -81.1)
+    // compute bounce, aka the intersection with tennis court (which lies at y = -81)
     // these are placeholders for bounce and and screen boundaries for now
     if (m_pos.y - m_radius <= -81) {
         m_vel.y *= -1;
         m_pos += scaledTime * m_vel;
         hasCollision = false;
+
+        // A tennis ball always has topsin after it bounces.
+        // So if the ball is moving to the right, we want counterclockwise spin
+        // If the ball is moving to the left, we want clockwise spin
+        if ((m_vel.x > 0 && m_angVel > 0) || (m_vel.x < 0 && m_angVel < 0)) {
+            m_angVel = -m_angVel;
+        }
+        m_angVel *= 0.7;
+
         return;
     }
     if (m_pos.x + m_radius >= 199.0 || m_pos.x - m_radius <= -199.0) {
