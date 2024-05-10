@@ -37,14 +37,19 @@ void Ball::tick(float dT) {
     if (detectRacquetCollision() && !hasCollision) {
         hitBall();
         hasCollision = true;
+
         // update ang velocity
         // Compute torque from racquet on ball
-
         glm::vec3 racquetForce = racquet->m_mass * racquet->m_accel;
         glm::vec3 torque = glm::cross(racquetForce, racquet->closestNormal);
         float momentOfInertia = (2.0/3.0) * m_mass * m_radius * m_radius;
         glm::vec3 anglVelocity  = torque / (momentOfInertia * scaledTime);
         m_angVel = anglVelocity[2];
+        if (m_angVel > 1000.0) {
+            m_angVel = 1000.0;
+        } else if (m_angVel < -1000.0) {
+            m_angVel = -1000.0;
+        }
     }
 
     if (isStopped) {
@@ -58,7 +63,12 @@ void Ball::tick(float dT) {
 
     // compute bounce, aka the intersection with tennis court (which lies at y = -81)
     // these are placeholders for bounce and and screen boundaries for now
-    if (m_pos.y - m_radius <= -81) {
+    if (m_pos.y - m_radius <= -81.0 && m_pos.y - m_radius >= 80.0) {
+        m_vel.y = 0;
+        m_pos += scaledTime * m_vel;
+        hasCollision = false;
+        m_angVel *= 1;
+    } else if (m_pos.y - m_radius <= -81 || m_pos.y - m_radius >= 133.33) {
         m_vel.y *= -1;
         m_pos += scaledTime * m_vel;
         hasCollision = false;
@@ -69,7 +79,7 @@ void Ball::tick(float dT) {
         if ((m_vel.x > 0 && m_angVel > 0) || (m_vel.x < 0 && m_angVel < 0)) {
             m_angVel = -m_angVel;
         }
-        m_angVel *= 0.7;
+        m_vel.y *= 0.8;
 
         return;
     }
@@ -337,7 +347,7 @@ void Ball::hitBall() {
     }
     angle = glm::radians(deg);
 
-    // Rotate ball's velocity vector about closestPoint, following law of reflectance
+    // Rotate ball's velocity vector about closestPoint, following law of reflection
     glm::mat3 rotation = generateRotationMatrix(-2 * angle);
     glm::vec3 cp = racquet->closestPoint;
     glm::vec3 newVelR = rotation * (-ballVelR);
@@ -357,6 +367,15 @@ void Ball::computeForces() {
 
     // compute drag
     float c_d = 0.55;
+
+    // modify drag coefficient to account for ball "fuzziness". The greater the spin on the
+    // ball, the smaller the coefficient... for a minimum of 0.5.
+    if (abs(m_angVel) >= 100.0) {
+        c_d = -0.0002 * m_angVel + 0.55;
+    } else if (abs(m_angVel) >= 500.0) {
+        c_d = 0.47;
+    }
+
     float radius = m_radius * 0.03;
     float drag = 0.5 * c_d * PI * radius * radius * RHO * glm::length2(m_vel);
     f_drag = -drag * glm::normalize(m_vel);
